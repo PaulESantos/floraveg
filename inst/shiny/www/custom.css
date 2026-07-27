@@ -1,0 +1,89 @@
+/* Theme and layout custom styling for floraveg Shiny App */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f8faf9;
+  color: #1e293b;
+}
+
+.navbar {
+  background: linear-gradient(135deg, #0d2818 0%, #1b4d3e 100%) !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  padding: 0.8rem 1.5rem;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: -0.5px;
+  color: #e2f1e7 !important;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #ffffff;
+  margin-bottom: 1.25rem;
+}
+
+.card:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.card-header {
+  border-bottom: 1px solid #e2eef0;
+  font-weight: 600;
+  border-radius: 12px 12px 0 0 !important;
+  padding: 0.9rem 1.2rem;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1b4d3e;
+}
+
+.metric-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4d3e 100%);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  box-shadow: 0 2px 6px rgba(27, 77, 62, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1b4d3e 0%, #081c15 100%);
+  box-shadow: 0 4px 12px rgba(27, 77, 62, 0.35);
+}
+
+.nav-pills .nav-link.active {
+  background-color: #1b4d3e !important;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.dataTables_wrapper {
+  padding: 0.5rem;
+}
+
+pre, code, .shiny-bound-output pre {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  background-color: #1e293b !important;
+  color: #38bdf8 !important;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #334155;
+  font-size: 0.9rem;
+}

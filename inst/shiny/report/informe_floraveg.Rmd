@@ -1,0 +1,208 @@
+---
+title: "Informe Técnico de Línea Base Biológica: Flora y Vegetación"
+subtitle: "Evaluación de Indicadores de Diversidad, Estructura, IVI, Volumen y Biomasa"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+    fig_width: 6.5
+    fig_height: 4.5
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    fig_width: 7
+    fig_height: 5
+params:
+  datos: NA
+header-includes:
+  - \usepackage{float}
+  - \usepackage{booktabs}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, fig.align = "center")
+library(floraveg)
+library(ggplot2)
+```
+
+# Resumen Ejecutivo del Inventario Florístico
+
+Este informe fue generado automáticamente por el sistema **`floraveg`** en cumplimiento normativo con la **Guía de Inventarios de Flora y Vegetación (MINAM)** y los **Lineamientos de Línea Base Ambiental del SINIA**.
+
+```{r resumen_datos}
+df_raw <- params$datos
+if (!is.null(df_raw) && is.data.frame(df_raw)) {
+  df <- standardize_inventory(df_raw)
+  n_reg <- nrow(df)
+  n_sitios <- length(unique(df$sitio))
+  n_sp <- length(unique(df$especie))
+  has_dap <- "dap_cm" %in% names(df)
+  has_alt <- "altura_m" %in% names(df)
+  
+  df_summary <- data.frame(
+    Métrica = c("Total de Registros en Campo", "Número de Parcelas / Puntos de Muestreo", "Riqueza Taxonómica Total (Especies)", "Información Dasométrica (DAP)", "Información Altura Maderable"),
+    Valor = c(n_reg, n_sitios, n_sp, ifelse(has_dap, "Disponible (Sí)", "No provisto"), ifelse(has_alt, "Disponible (Sí)", "No provisto"))
+  )
+  knitr::kable(df_summary, caption = "Resumen General del Inventario de Campo")
+} else {
+  cat("No se provió un conjunto de datos válido.")
+}
+```
+
+\newpage
+
+# Diversidad Florística Alfa y Beta
+
+## Indicadores de Diversidad Alfa por Sitio
+
+Se presentan las métricas de Riqueza ($S$), Abundancia ($N$), Índices de Shannon-Wiener ($H'$), Equitabilidad de Pielou ($J'$), Simpson y Margalef.
+
+```{r diversidad_alfa}
+if (exists("df") && !is.null(df)) {
+  alfa <- diversidad_alfa(df, metodos = "full", base = 2)
+  if ("shannon_h" %in% names(alfa)) alfa$shannon_h <- round(alfa$shannon_h, 3)
+  if ("pielou_j" %in% names(alfa)) alfa$pielou_j <- round(alfa$pielou_j, 3)
+  if ("gini_simpson" %in% names(alfa)) alfa$gini_simpson <- round(alfa$gini_simpson, 3)
+  if ("simpson_inv" %in% names(alfa)) alfa$simpson_inv <- round(alfa$simpson_inv, 3)
+  if ("margalef" %in% names(alfa)) alfa$margalef <- round(alfa$margalef, 3)
+  
+  names(alfa) <- c("Sitio", "N° Ind (N)", "Riqueza (S)", "Shannon H'", "Pielou J'", "Gini-Simpson", "Simpson Inv", "Margalef", "Menhinick", "McIntosh")
+  knitr::kable(alfa, caption = "Índices de Diversidad Alfa por Parcela de Muestreo")
+}
+```
+
+## Similitud de Diversidad Beta
+
+Evaluación de la similitud composicional entre parcelas mediante el índice de similitud de **Jaccard**.
+
+```{r diversidad_beta}
+if (exists("df") && !is.null(df)) {
+  beta_tidy <- diversidad_beta(df, metodo = "jaccard", formato = "tidy")
+  names(beta_tidy) <- c("Sitio 1", "Sitio 2", "Similitud Jaccard", "Disimilitud")
+  knitr::kable(head(beta_tidy, 10), caption = "Matriz de Similitud Beta (Primeros 10 pares)")
+}
+```
+
+## Rarefacción y Extrapolación (`iNEXT` - Chao et al.)
+
+```{r inext_plot, fig.cap="Curva de Rarefacción y Extrapolación de la Riqueza basada en iNEXT"}
+if (exists("df") && !is.null(df) && requireNamespace("iNEXT", quietly = TRUE)) {
+  mat_comm <- t(long_to_comm(df))
+  if (ncol(mat_comm) >= 2 && nrow(mat_comm) >= 1) {
+    nboot_val <- if (ncol(mat_comm) > 20 || nrow(mat_comm) > 100) 10 else 20
+    res_inext <- tryCatch({
+      iNEXT::iNEXT(mat_comm, q = 0, datatype = "abundance", nboot = nboot_val)
+    }, error = function(e) NULL)
+    
+    if (!is.null(res_inext)) {
+      p_inext <- suppressWarnings(iNEXT::ggiNEXT(res_inext, type = 1)) +
+        theme_minimal() +
+        labs(title = "Curvas de Rarefacción & Extrapolación por Parcela", x = "Número de Individuos", y = "Riqueza de Especies (q = 0)")
+      print(p_inext)
+    }
+  }
+}
+```
+
+\newpage
+
+# Estructura Vegetacional y Distribución Diamétrica
+
+```{r estructura_dap, fig.cap="Distribución de Frecuencia por Clases Diamétricas (J-Invertida)"}
+if (exists("df") && !is.null(df) && "dap_cm" %in% names(df)) {
+  dd <- distribucion_diametrica(df$dap_cm, ancho_clase = 10)
+  knitr::kable(dd$tabla_clases, caption = "Distribución Diamétrica por Clases de DAP (cm)")
+  
+  p_dap <- ggplot(dd$tabla_clases, aes(x = Clase, y = frecuencia)) +
+    geom_col(fill = "#2d6a4f", color = "#1b4d3e", width = 0.7) +
+    theme_minimal() +
+    labs(title = "Distribución Diamétrica en Clases (J-Invertida)", x = "Clase Diamétrica (DAP en cm)", y = "Número de Arboles / Individuos") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  print(p_dap)
+} else {
+  cat("No se registraron datos de DAP en el inventario.")
+}
+```
+
+\newpage
+
+# Estimación Dasométrica: Área Basal, Volumen y Biomasa Aérea
+
+```{r biomasa_volumen, fig.cap="Volumen Maderable ($m^3$) y Biomasa Aérea ($t$) acumulados por Sitio"}
+if (exists("df") && !is.null(df) && "dap_cm" %in% names(df)) {
+  df$ab_m2 <- area_basal(df$dap_cm, unidad_salida = "m2")
+  
+  if ("altura_m" %in% names(df)) {
+    df$vol_m3 <- volumen_maderable(df$ab_m2, df$altura_m, factor_forma = 0.70)
+    df$densidad <- obtener_densidad_madera(df$especie, default = 0.60)
+    df$biomasa_t <- biomasa_aerea(df$densidad, df$vol_m3)
+    
+    resumen_das <- aggregate(cbind(ab_m2, vol_m3, biomasa_t) ~ sitio, data = df, FUN = sum)
+    resumen_das$ab_m2 <- round(resumen_das$ab_m2, 3)
+    resumen_das$vol_m3 <- round(resumen_das$vol_m3, 3)
+    resumen_das$biomasa_t <- round(resumen_das$biomasa_t, 3)
+    names(resumen_das) <- c("Sitio", "Área Basal (m²)", "Volumen Maderable (m³)", "Biomasa Aérea (t)")
+    
+    knitr::kable(resumen_das, caption = "Resumen Dasométrico Integrado por Parcela")
+    
+    df_long <- data.frame(
+      Sitio = rep(resumen_das$Sitio, 2),
+      Métrica = rep(c("Volumen (m³)", "Biomasa (t)"), each = nrow(resumen_das)),
+      Valor = c(resumen_das$`Volumen Maderable (m³)`, resumen_das$`Biomasa Aérea (t)`)
+    )
+    
+    p_bio <- ggplot(df_long, aes(x = Sitio, y = Valor, fill = Métrica)) +
+      geom_col(position = "dodge", width = 0.7) +
+      scale_fill_manual(values = c("Volumen (m³)" = "#1b4d3e", "Biomasa (t)" = "#52b788")) +
+      theme_minimal() +
+      labs(title = "Volumen Maderable y Biomasa Aérea por Parcela", x = "Parcela / Sitio", y = "Valor Estimado")
+    print(p_bio)
+  } else {
+    resumen_ab <- aggregate(ab_m2 ~ sitio, data = df, FUN = sum)
+    resumen_ab$ab_m2 <- round(resumen_ab$ab_m2, 3)
+    names(resumen_ab) <- c("Sitio", "Área Basal (m²)")
+    knitr::kable(resumen_ab, caption = "Área Basal Total por Parcela")
+  }
+} else {
+  cat("Se requieren mediciones de DAP para calcular Área Basal, Volumen y Biomasa.")
+}
+```
+
+\newpage
+
+# Índice de Valor de Importancia Ecológica (IVI)
+
+Evaluación del **Índice de Valor de Importancia (IVI)** calculando la Abundancia Relativa (%), Dominancia Relativa (%) y Frecuencia Relativa (%).
+
+```{r ivi_plot, fig.cap="Especies Ecológicamente Principales según el Índice de Valor de Importancia (%)"}
+if (exists("df") && !is.null(df)) {
+  tabla_ivi <- calc_ivi(df)
+  tabla_top <- head(tabla_ivi, 12)
+  
+  cols_wanted <- c("especie", "n_individuos", "abundancia_rel_pct", "area_basal_m2", "dominancia_rel_pct", "frecuencia_rel_pct", "ivi")
+  cols_avail <- intersect(cols_wanted, names(tabla_top))
+  
+  tabla_pub <- tabla_top[, cols_avail, drop = FALSE]
+  num_cols <- sapply(tabla_pub, is.numeric)
+  tabla_pub[num_cols] <- lapply(tabla_pub[num_cols], function(x) round(x, 2))
+  
+  knitr::kable(tabla_pub, caption = "Top 12 Especies con Mayor Valor de Importancia Ecológica (IVI)")
+  
+  df_ivi_long <- data.frame(
+    Especie = rep(tabla_top$especie, 3),
+    Componente = rep(c("Abundancia Rel. (%)", "Dominancia Rel. (%)", "Frecuencia Rel. (%)"), each = nrow(tabla_top)),
+    Valor = c(tabla_top$abundancia_rel_pct, tabla_top$dominancia_rel_pct, tabla_top$frecuencia_rel_pct)
+  )
+  
+  p_ivi <- ggplot(df_ivi_long, aes(x = reorder(Especie, Valor), y = Valor, fill = Componente)) +
+    geom_col(position = "stack", width = 0.7) +
+    coord_flip() +
+    scale_fill_manual(values = c("Abundancia Rel. (%)" = "#40916c", "Dominancia Rel. (%)" = "#1b4d3e", "Frecuencia Rel. (%)" = "#95d5b2")) +
+    theme_minimal() +
+    labs(title = "Estructura del IVI por Especie", x = "Nombre Científico", y = "Porcentaje de Importancia (%)")
+  print(p_ivi)
+}
+```
