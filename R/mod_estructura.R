@@ -77,7 +77,11 @@ mod_estructura_server <- function(id, datos_reactive = NULL) {
 
     output$plot_diametrica <- plotly::renderPlotly({
       df <- datos_modulo()
-      shiny::req(df, "dap_cm" %in% names(df))
+      shiny::req(df)
+      shiny::validate(shiny::need(
+        "dap_cm" %in% names(df),
+        "Se requiere una columna DAP mapeada como 'dap_cm' para construir la distribucion diametrica."
+      ))
 
       ancho <- input$ancho_clase
       dd <- distribucion_diametrica(df$dap_cm, ancho_clase = ancho)

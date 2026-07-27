@@ -7,6 +7,8 @@ Authors@R:
            comment = c(ORCID = "0000-0002-6635-0375"))
 Description: Implementación de funciones en R para el cálculo de indicadores de diversidad, parámetros estructurales (área basal, volumen maderable, biomasa), distribución diamétrica e índice de valor de importancia (IVI), alineados estrictamente a la Guía de Inventario de la Flora y Vegetación (MINAM, 2015).
 License: MIT + file LICENSE
+Depends: 
+    R (>= 3.5.0)
 Imports: 
     vegan,
     ggplot2,

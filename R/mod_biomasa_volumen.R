@@ -196,7 +196,7 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
     custom_file_densities <- shiny::reactive({
       shiny::req(input$file_densidades_custom)
       file_path <- input$file_densidades_custom$datapath
-      ext <- tolower(tools::file_ext(file_path))
+      ext <- tolower(tools::file_ext(input$file_densidades_custom$name))
 
       tryCatch({
         if (ext %in% c("csv", "txt")) {
@@ -268,19 +268,17 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
           db_gen <- custom_res$db_gen
 
           dens_vec <- rep(as.numeric(def_val), nrow(df))
-          generos <- sub(" .*", "", as.character(df$especie))
+          especies_df <- as.character(df$especie)
+          generos <- sub(" .*", "", especies_df)
 
-          for (i in seq_along(df$especie)) {
-            sp <- as.character(df$especie[i])
-            gen <- generos[i]
+          sp_idx <- match(especies_df, names(db_sp))
+          has_sp <- !is.na(sp_idx) & !is.na(db_sp[sp_idx])
+          dens_vec[has_sp] <- as.numeric(db_sp[sp_idx][has_sp])
 
-            if (!is.na(sp) && sp %in% names(db_sp) && !is.na(db_sp[[sp]])) {
-              dens_vec[i] <- as.numeric(db_sp[[sp]])
-            } else if (!is.null(db_gen) && !is.na(gen) && gen %in% names(db_gen) && !is.na(db_gen[[gen]])) {
-              dens_vec[i] <- as.numeric(db_gen[[gen]])
-            } else {
-              dens_vec[i] <- as.numeric(def_val)
-            }
+          if (!is.null(db_gen)) {
+            gen_idx <- match(generos, names(db_gen))
+            has_gen <- !has_sp & !is.na(gen_idx) & !is.na(db_gen[gen_idx])
+            dens_vec[has_gen] <- as.numeric(db_gen[gen_idx][has_gen])
           }
           orig <- paste0("Plantilla Excel ('", input$file_densidades_custom$name, "') - Coincidencia Especie/G\u00e9nero con fallback est\u00e1ndar (", def_val, " g/cm\u00b3)")
         } else {
@@ -332,7 +330,7 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
       info <- densidad_info()
       df$dens_assigned <- info$vector
 
-      if (!"dap_cm" %in% names(df)) return(NULL)
+      if (!("dap_cm" %in% names(df))) return(NULL)
       df$ab_m2 <- area_basal(dap_cm = df$dap_cm, unidad_salida = "m2")
 
       if ("altura_m" %in% names(df)) {
@@ -362,15 +360,21 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
     })
 
     output$tabla_biomasa <- DT::renderDT({
-      shiny::req(df_bio())
       df_show <- df_bio()
+      shiny::validate(shiny::need(
+        !is.null(df_show),
+        "Se requiere una columna DAP mapeada como 'dap_cm' para calcular area basal, volumen y biomasa."
+      ))
       names(df_show) <- c("Sitio", "\u00c1rea Basal Total (m\u00b2)", "Volumen Maderable (m\u00b3)", "Densidad Promedio (g/cm\u00b3)", "Biomasa A\u00e9rea (t)")
       DT::datatable(df_show, options = list(pageLength = 6, scrollX = TRUE), style = "bootstrap4")
     })
 
     output$plot_biomasa <- plotly::renderPlotly({
       df_b <- df_bio()
-      shiny::req(df_b)
+      shiny::validate(shiny::need(
+        !is.null(df_b),
+        "Se requiere DAP para graficar metricas dasometricas. Revise el mapeo de columnas en Carga de Datos."
+      ))
 
       df_long <- data.frame(
         Sitio = rep(df_b$Sitio, 2),
