@@ -1,0 +1,23 @@
+# Authors and Citation
+
+## Authors
+
+- **Paul E. Santos Andrade**. Author, maintainer, copyright holder.
+  [](https://orcid.org/0000-0002-6635-0375)
+
+## Citation
+
+Source:
+[`DESCRIPTION`](https://github.com/PaulESantos/floraveg/blob/main/DESCRIPTION)
+
+Santos Andrade P (2026). *floraveg: Indicadores Ecológicos y de
+Vegetación según Guía MINAM*. R package version 0.0.0.9000,
+<https://github.com/PaulESantos/floraveg>.
+
+    @Manual{,
+      title = {floraveg: Indicadores Ecológicos y de Vegetación según Guía MINAM},
+      author = {Paul E. {Santos Andrade}},
+      year = {2026},
+      note = {R package version 0.0.0.9000},
+      url = {https://github.com/PaulESantos/floraveg},
+    }
