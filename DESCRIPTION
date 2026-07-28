@@ -16,16 +16,16 @@ Imports:
     bslib,
     DT,
     plotly,
+    readxl,
+    writexl,
+    rmarkdown,
     stats,
     rlang,
     cli
 Suggests: 
     testthat (>= 3.0.0),
-    readxl,
-    writexl,
     ggdendro,
-    iNEXT,
-    rmarkdown
+    iNEXT
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
