@@ -3,7 +3,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">floraveg</a>
 
@@ -15,10 +15,12 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+      <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../index.html" aria-label="Inicio"><span class="fa fa-home fa-lg"></span></a></li>
+<li class="active nav-item"><a class="nav-link" href="../reference/index.html">Referencia de Funciones</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Novedades</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/PaulESantos/floraveg/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/PaulESantos/floraveg" aria-label="Repositorio GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -31,9 +33,10 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="-carga-estandarizaci-n-y-datos-de-ejemplo"></h2><li>Carga, Estandarización y Datos de Ejemplo</li>
 
 
+      <div class="section-desc"><p>Funciones para estandarizar y validar inventarios florísticos y datos de prueba neotropicales.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -42,17 +45,31 @@
 
       <dl><dt>
 
-          <code><a href="abundancia.html">abundancia()</a></code>
+          <code><a href="standardize_inventory.html">standardize_inventory()</a></code>
 
         </dt>
-        <dd>Abundancia Absoluta y Relativa (§6.3 MINAM 2015)</dd>
+        <dd>Estandarizar nombres de columnas del inventario floristico</dd>
 
         <dt>
 
-          <code><a href="area_basal.html">area_basal()</a></code>
+          <code><a href="validate_inventario.html">validate_inventario()</a></code>
 
         </dt>
-        <dd>Área Basal (§6.8 MINAM 2015)</dd>
+        <dd>Validar estructura de datos de inventario</dd>
+
+        <dt>
+
+          <code><a href="long_to_comm.html">long_to_comm()</a></code>
+
+        </dt>
+        <dd>Convertir formato de inventario (long) a matriz de comunidad (sitios x especies)</dd>
+
+        <dt>
+
+          <code><a href="dune_t.html">dune_t</a></code>
+
+        </dt>
+        <dd>Datos de Observaciones de Vegetacion de Dunas (Dune Dataset en Formato Largo)</dd>
 
         <dt>
 
@@ -60,64 +77,18 @@
 
         </dt>
         <dd>Datos de Inventario de Arboles en la Isla Barro Colorado (BCI Dataset en Formato Largo)</dd>
+      </dl></div><div class="section level2">
+      <h2 id="-diversidad-alfa-beta-y-curvas-de-acumulaci-n"></h2><li>Diversidad Alfa, Beta y Curvas de Acumulación</li>
 
-        <dt>
 
-          <code><a href="biomasa_aerea.html">biomasa_aerea()</a></code>
+      <div class="section-desc"><p>Índices de riqueza, equidad (Shannon, Pielou), dominancia (Simpson), similitud (Beta, Sørensen) y curvas de rango-abundancia (Whittaker).</p></div>
 
-        </dt>
-        <dd>Biomasa Aérea (§6.11 MINAM 2015)</dd>
+      <dl></dl></div><div class="section level2">
 
-        <dt>
 
-          <code><a href="calc_ivi.html">calc_ivi()</a></code>
 
-        </dt>
-        <dd>Índice de Valor de Importancia (IVI) (§6.12 MINAM 2015)</dd>
 
-        <dt>
-
-          <code><a href="cobertura.html">cobertura()</a></code>
-
-        </dt>
-        <dd>Cobertura (Área de Copa) (§6.9 MINAM 2015)</dd>
-
-        <dt>
-
-          <code><a href="curva_acumulacion.html">curva_acumulacion()</a></code>
-
-        </dt>
-        <dd>Curva de Acumulación de Especies (MINAM 2015)</dd>
-
-        <dt>
-
-          <code><a href="curva_whittaker.html">curva_whittaker()</a></code>
-
-        </dt>
-        <dd>Curvas de Dominancia-Abundancia de Whittaker (Rank-Abundance)</dd>
-
-        <dt>
-
-          <code><a href="densidad_poblacional.html">densidad_poblacional()</a></code>
-
-        </dt>
-        <dd>Densidad Poblacional (§6.4 MINAM 2015)</dd>
-
-        <dt>
-
-          <code><a href="densidades_referencia_neotropical.html">densidades_referencia_neotropical</a></code>
-
-        </dt>
-        <dd>Base de Datos de Referencia Neotropical para Densidad Básica de la Madera (g/cm³)</dd>
-
-        <dt>
-
-          <code><a href="distribucion_diametrica.html">distribucion_diametrica()</a></code>
-
-        </dt>
-        <dd>Distribución Diamétrica (§6.6 MINAM 2015)</dd>
-
-        <dt>
+      <dl><dt>
 
           <code><a href="diversidad_alfa.html">diversidad_alfa()</a></code>
 
@@ -133,17 +104,17 @@
 
         <dt>
 
-          <code><a href="diversidad_pielou.html">diversidad_pielou()</a></code>
-
-        </dt>
-        <dd>Índice de Equitabilidad de Pielou (J') (SINIA / MINAM Tabla 2.0-4)</dd>
-
-        <dt>
-
           <code><a href="diversidad_shannon.html">diversidad_shannon()</a></code>
 
         </dt>
         <dd>Índice de Diversidad de Shannon-Wiener (H') (MINAM 2015)</dd>
+
+        <dt>
+
+          <code><a href="diversidad_pielou.html">diversidad_pielou()</a></code>
+
+        </dt>
+        <dd>Índice de Equitabilidad de Pielou (J') (SINIA / MINAM Tabla 2.0-4)</dd>
 
         <dt>
 
@@ -161,31 +132,10 @@
 
         <dt>
 
-          <code><a href="dune_t.html">dune_t</a></code>
+          <code><a href="curva_acumulacion.html">curva_acumulacion()</a></code>
 
         </dt>
-        <dd>Datos de Observaciones de Vegetacion de Dunas (Dune Dataset en Formato Largo)</dd>
-
-        <dt>
-
-          <code><a href="estimadores_riqueza.html">estimadores_riqueza()</a></code>
-
-        </dt>
-        <dd>Estimadores No Paramétricos de Riqueza (SINIA / MINAM Tabla 2.0-3)</dd>
-
-        <dt>
-
-          <code><a href="frecuencia.html">frecuencia()</a></code>
-
-        </dt>
-        <dd>Frecuencia Absoluta y Relativa (§6.5 MINAM 2015)</dd>
-
-        <dt>
-
-          <code><a href="long_to_comm.html">long_to_comm()</a></code>
-
-        </dt>
-        <dd>Convertir formato de inventario (long) a matriz de comunidad (sitios x especies)</dd>
+        <dd>Curva de Acumulación de Especies (MINAM 2015)</dd>
 
         <dt>
 
@@ -196,10 +146,17 @@
 
         <dt>
 
-          <code><a href="obtener_densidad_madera.html">obtener_densidad_madera()</a></code>
+          <code><a href="estimadores_riqueza.html">estimadores_riqueza()</a></code>
 
         </dt>
-        <dd>Obtener Densidades Específicas de la Madera por Especie o Género</dd>
+        <dd>Estimadores No Paramétricos de Riqueza (SINIA / MINAM Tabla 2.0-3)</dd>
+
+        <dt>
+
+          <code><a href="curva_whittaker.html">curva_whittaker()</a></code>
+
+        </dt>
+        <dd>Curvas de Dominancia-Abundancia de Whittaker (Rank-Abundance)</dd>
 
         <dt>
 
@@ -207,13 +164,65 @@
 
         </dt>
         <dd>Grafico ggplot2 de Curvas de Dominancia-Abundancia de Whittaker</dd>
+      </dl></div><div class="section level2">
+      <h2 id="-par-metros-estructurales-e-ndice-de-valor-de-importancia-ivi-"></h2><li>Parámetros Estructurales e Índice de Valor de Importancia (IVI)</li>
+
+
+      <div class="section-desc"><p>Cálculo de abundancia, frecuencia, dominancia (área basal, cobertura), distribución diamétrica y posición sociológica / regeneración.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="abundancia.html">abundancia()</a></code>
+
+        </dt>
+        <dd>Abundancia Absoluta y Relativa (§6.3 MINAM 2015)</dd>
 
         <dt>
 
-          <code><a href="proporcion_fenologia.html">proporcion_fenologia()</a></code>
+          <code><a href="frecuencia.html">frecuencia()</a></code>
 
         </dt>
-        <dd>Proporción de Estados Fenológicos (SINIA / MINAM Tabla 2.1.4-8)</dd>
+        <dd>Frecuencia Absoluta y Relativa (§6.5 MINAM 2015)</dd>
+
+        <dt>
+
+          <code><a href="area_basal.html">area_basal()</a></code>
+
+        </dt>
+        <dd>Área Basal (§6.8 MINAM 2015)</dd>
+
+        <dt>
+
+          <code><a href="cobertura.html">cobertura()</a></code>
+
+        </dt>
+        <dd>Cobertura (Área de Copa) (§6.9 MINAM 2015)</dd>
+
+        <dt>
+
+          <code><a href="densidad_poblacional.html">densidad_poblacional()</a></code>
+
+        </dt>
+        <dd>Densidad Poblacional (§6.4 MINAM 2015)</dd>
+
+        <dt>
+
+          <code><a href="distribucion_diametrica.html">distribucion_diametrica()</a></code>
+
+        </dt>
+        <dd>Distribución Diamétrica (§6.6 MINAM 2015)</dd>
+
+        <dt>
+
+          <code><a href="calc_ivi.html">calc_ivi()</a></code>
+
+        </dt>
+        <dd>Índice de Valor de Importancia (IVI) (§6.12 MINAM 2015)</dd>
 
         <dt>
 
@@ -223,6 +232,61 @@
         <dd>Estructura de Regeneración Natural y Estadios Forestales (SINIA / MINAM §2.1.4.3.2)</dd>
 
         <dt>
+
+          <code><a href="proporcion_fenologia.html">proporcion_fenologia()</a></code>
+
+        </dt>
+        <dd>Proporción de Estados Fenológicos (SINIA / MINAM Tabla 2.1.4-8)</dd>
+      </dl></div><div class="section level2">
+      <h2 id="-biomasa-a-rea-agb-y-volumen-maderable"></h2><li>Biomasa Aérea (AGB) y Volumen Maderable</li>
+
+
+      <div class="section-desc"><p>Estimación de biomasa aérea leñosa (Chave et al. 2014), volumen maderable y base de datos de densidad de madera neotropical.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="biomasa_aerea.html">biomasa_aerea()</a></code>
+
+        </dt>
+        <dd>Biomasa Aérea (§6.11 MINAM 2015)</dd>
+
+        <dt>
+
+          <code><a href="volumen_maderable.html">volumen_maderable()</a></code>
+
+        </dt>
+        <dd>Volumen Maderable (§6.10 MINAM 2015)</dd>
+
+        <dt>
+
+          <code><a href="obtener_densidad_madera.html">obtener_densidad_madera()</a></code>
+
+        </dt>
+        <dd>Obtener Densidades Específicas de la Madera por Especie o Género</dd>
+
+        <dt>
+
+          <code><a href="densidades_referencia_neotropical.html">densidades_referencia_neotropical</a></code>
+
+        </dt>
+        <dd>Base de Datos de Referencia Neotropical para Densidad Básica de la Madera (g/cm³)</dd>
+      </dl></div><div class="section level2">
+      <h2 id="-interfaz-gr-fica-shiny-aplicaci-n-y-m-dulos-standalone-"></h2><li>Interfaz Gráfica Shiny (Aplicación y Módulos Standalone)</li>
+
+
+      <div class="section-desc"><p>Lanzadores para la aplicación web interactiva completa o módulos independientes en Shiny.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="run_floraveg.html">run_floraveg()</a></code>
 
@@ -235,29 +299,9 @@
 
         </dt>
         <dd>Lanzadores Standalone de Módulos Shiny de floraveg</dd>
-
-        <dt>
-
-          <code><a href="standardize_inventory.html">standardize_inventory()</a></code>
-
-        </dt>
-        <dd>Estandarizar nombres de columnas del inventario floristico</dd>
-
-        <dt>
-
-          <code><a href="validate_inventario.html">validate_inventario()</a></code>
-
-        </dt>
-        <dd>Validar estructura de datos de inventario</dd>
-
-        <dt>
-
-          <code><a href="volumen_maderable.html">volumen_maderable()</a></code>
-
-        </dt>
-        <dd>Volumen Maderable (§6.10 MINAM 2015)</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
