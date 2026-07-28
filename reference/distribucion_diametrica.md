@@ -57,6 +57,6 @@ distribucion_diametrica(daps, ancho_clase = 10)
 #>  residual sum-of-squares: 1.049
 #> 
 #> Number of iterations to convergence: 5 
-#> Achieved convergence tolerance: 5.216e-07
+#> Achieved convergence tolerance: 5.227e-07
 #> 
 ```
