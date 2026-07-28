@@ -41,13 +41,41 @@ mod_biomasa_volumen_ui <- function(id) {
     ),
     shiny::div(
       class = "card p-3 mb-4 shadow-sm",
-      shiny::h4(class = "card-header bg-success text-white mb-3", shiny::icon("table"), " 2. Resumen Dasom\u00e9trico y Biomasa por Parcela"),
+      shiny::div(
+        class = "d-flex justify-content-between align-items-center mb-3",
+        shiny::h4(class = "card-header bg-success text-white mb-0 flex-grow-1 me-2", shiny::icon("table"), " 2. Resumen Dasom\u00e9trico y Biomasa por Parcela"),
+        shiny::div(
+          class = "d-flex gap-2",
+          shiny::downloadButton(ns("dl_bio_csv"), "Descargar CSV", class = "btn-outline-primary btn-sm", icon = shiny::icon("file-csv")),
+          shiny::downloadButton(ns("dl_bio_xlsx"), "Descargar Excel (.xlsx)", class = "btn-outline-success btn-sm", icon = shiny::icon("file-excel"))
+        )
+      ),
       DT::DTOutput(ns("tabla_biomasa"))
     ),
     shiny::div(
       class = "card p-3 mb-4 shadow-sm",
       shiny::h4(class = "card-header bg-dark text-white mb-3", shiny::icon("chart-bar"), " 3. Estimaci\u00f3n de Volumen Maderable y Biomasa (ggplot2)"),
       plotly::plotlyOutput(ns("plot_biomasa"), height = "450px")
+    ),
+    shiny::div(
+      class = "card p-3 mb-4 shadow-sm",
+      shiny::div(
+        class = "d-flex justify-content-between align-items-center mb-3",
+        shiny::h4(class = "card-header bg-success text-white mb-0 flex-grow-1 me-2", shiny::icon("cloud"), " 4. Carbono Almacenado y CO2 Equivalente"),
+        shiny::div(
+          class = "d-flex gap-2",
+          shiny::downloadButton(ns("dl_carb_sitio_csv"), "Carb. Sitio (CSV)", class = "btn-outline-primary btn-sm", icon = shiny::icon("file-csv")),
+          shiny::downloadButton(ns("dl_carb_sitio_xlsx"), "Carb. Sitio (Excel)", class = "btn-outline-success btn-sm", icon = shiny::icon("file-excel")),
+          shiny::downloadButton(ns("dl_carb_sp_csv"), "Carb. Especie (CSV)", class = "btn-outline-primary btn-sm", icon = shiny::icon("file-csv")),
+          shiny::downloadButton(ns("dl_carb_sp_xlsx"), "Carb. Especie (Excel)", class = "btn-outline-success btn-sm", icon = shiny::icon("file-excel"))
+        )
+      ),
+      shiny::p(class = "text-muted small", "Carbono = biomasa * 0.47; CO2e = carbono * 3.667."),
+      DT::DTOutput(ns("tabla_carbono_sitio")),
+      shiny::hr(),
+      plotly::plotlyOutput(ns("plot_carbono"), height = "380px"),
+      shiny::hr(),
+      DT::DTOutput(ns("tabla_carbono_especie"))
     )
   )
 }
@@ -322,7 +350,7 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
       )
     })
 
-    df_bio <- shiny::reactive({
+    df_bio_detalle <- shiny::reactive({
       df <- datos_modulo()
       shiny::req(df)
 
@@ -336,13 +364,24 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
       if ("altura_m" %in% names(df)) {
         df$vol_m3 <- volumen_maderable(df$ab_m2, df$altura_m, factor_forma = fm)
         df$biomasa_ton <- biomasa_aerea(densidad_madera = df$dens_assigned, volumen_m3 = df$vol_m3)
+        df$carbono_t <- df$biomasa_ton * 0.47
+        df$co2e_t <- df$carbono_t * 3.667
       } else {
         df$vol_m3 <- NA_real_
         df$biomasa_ton <- NA_real_
+        df$carbono_t <- NA_real_
+        df$co2e_t <- NA_real_
       }
 
+      df
+    })
+
+    df_bio <- shiny::reactive({
+      df <- df_bio_detalle()
+      if (is.null(df)) return(NULL)
+
       res <- stats::aggregate(
-        cbind(ab_m2, vol_m3, biomasa_ton, dens_assigned) ~ sitio,
+        cbind(ab_m2, vol_m3, biomasa_ton, carbono_t, co2e_t, dens_assigned) ~ sitio,
         data = df,
         FUN = function(x) c(sum = sum(x, na.rm = TRUE), mean = mean(x, na.rm = TRUE))
       )
@@ -353,6 +392,8 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
         Volumen_m3 = round(res$vol_m3[, "sum"], 3),
         Densidad_Prom_g_cm3 = round(res$dens_assigned[, "mean"], 3),
         Biomasa_t = round(res$biomasa_ton[, "sum"], 3),
+        Carbono_t = round(res$carbono_t[, "sum"], 3),
+        CO2e_t = round(res$co2e_t[, "sum"], 3),
         stringsAsFactors = FALSE
       )
 
@@ -365,7 +406,7 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
         !is.null(df_show),
         "Se requiere una columna DAP mapeada como 'dap_cm' para calcular area basal, volumen y biomasa."
       ))
-      names(df_show) <- c("Sitio", "\u00c1rea Basal Total (m\u00b2)", "Volumen Maderable (m\u00b3)", "Densidad Promedio (g/cm\u00b3)", "Biomasa A\u00e9rea (t)")
+      names(df_show) <- c("Sitio", "\u00c1rea Basal Total (m\u00b2)", "Volumen Maderable (m\u00b3)", "Densidad Promedio (g/cm\u00b3)", "Biomasa A\u00e9rea (t)", "Carbono (t)", "CO2e (t)")
       DT::datatable(df_show, options = list(pageLength = 6, scrollX = TRUE), style = "bootstrap4")
     })
 
@@ -384,8 +425,8 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
 
       p <- ggplot2::ggplot(df_long, ggplot2::aes(x = Sitio, y = Valor, fill = Metrica)) +
         ggplot2::geom_col(position = "dodge", alpha = 0.9) +
-        ggplot2::scale_fill_manual(values = c("Volumen (m3)" = "#1b4d3e", "Biomasa (t)" = "#52b788")) +
-        ggplot2::theme_minimal() +
+        fv_scale_fill(c("Volumen (m3)", "Biomasa (t)")) +
+        fv_chart_theme() +
         ggplot2::labs(
           title = "Estimaci\u00f3n de Volumen Maderable y Biomasa por Sitio",
           x = "Sitio / Parcela",
@@ -395,6 +436,130 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
 
       plotly::ggplotly(p)
     })
+
+    carbono_especie <- shiny::reactive({
+      df <- df_bio_detalle()
+      if (is.null(df)) return(NULL)
+      if (all(is.na(df$carbono_t))) return(NULL)
+      res <- stats::aggregate(
+        cbind(biomasa_ton, carbono_t, co2e_t) ~ especie,
+        data = df,
+        FUN = sum,
+        na.rm = TRUE
+      )
+      data.frame(
+        Especie = res$especie,
+        Biomasa_t = round(res$biomasa_ton, 3),
+        Carbono_t = round(res$carbono_t, 3),
+        CO2e_t = round(res$co2e_t, 3),
+        stringsAsFactors = FALSE
+      )[order(-res$carbono_t), ]
+    })
+
+    output$tabla_carbono_sitio <- DT::renderDT({
+      df_det <- df_bio_detalle()
+      shiny::validate(shiny::need(
+        !is.null(df_det) && !all(is.na(df_det$carbono_t)),
+        "Se requiere DAP y altura para estimar biomasa, carbono y CO2 equivalente."
+      ))
+      df_b <- df_bio()
+      df_show <- df_b[, c("Sitio", "Biomasa_t", "Carbono_t", "CO2e_t")]
+      names(df_show) <- c("Sitio", "Biomasa Aerea (t)", "Carbono Almacenado (t)", "CO2e (t)")
+      DT::datatable(df_show, options = list(pageLength = 6, scrollX = TRUE), rownames = FALSE, style = "bootstrap4")
+    })
+
+    output$plot_carbono <- plotly::renderPlotly({
+      df_det <- df_bio_detalle()
+      shiny::validate(shiny::need(
+        !is.null(df_det) && !all(is.na(df_det$carbono_t)),
+        "No hay estimaciones de carbono disponibles. Revise DAP y altura."
+      ))
+      df_b <- df_bio()
+      df_long <- data.frame(
+        Sitio = rep(df_b$Sitio, 2),
+        Metrica = rep(c("Carbono (t)", "CO2e (t)"), each = nrow(df_b)),
+        Valor = c(df_b$Carbono_t, df_b$CO2e_t)
+      )
+      p <- ggplot2::ggplot(df_long, ggplot2::aes(x = Sitio, y = Valor, fill = Metrica)) +
+        ggplot2::geom_col(position = "dodge", alpha = 0.9) +
+        fv_scale_fill(c("Carbono (t)", "CO2e (t)")) +
+        fv_chart_theme() +
+        ggplot2::labs(
+          title = "Carbono almacenado y CO2 equivalente por sitio",
+          x = "Sitio / Parcela",
+          y = "Toneladas",
+          fill = "Metrica"
+        )
+      plotly::ggplotly(p)
+    })
+
+    output$tabla_carbono_especie <- DT::renderDT({
+      df_sp <- carbono_especie()
+      shiny::validate(shiny::need(!is.null(df_sp), "No hay estimaciones por especie disponibles."))
+      DT::datatable(df_sp, options = list(pageLength = 8, scrollX = TRUE), rownames = FALSE, style = "bootstrap4")
+    })
+
+    # Descargas Biomasa y Dasometria
+    output$dl_bio_csv <- shiny::downloadHandler(
+      filename = function() { paste0("biomasa_volumen_parcela_", Sys.Date(), ".csv") },
+      content = function(file) { utils::write.csv(df_bio(), file, row.names = FALSE) }
+    )
+
+    output$dl_bio_xlsx <- shiny::downloadHandler(
+      filename = function() { paste0("biomasa_volumen_parcela_", Sys.Date(), ".xlsx") },
+      content = function(file) {
+        if (requireNamespace("writexl", quietly = TRUE)) {
+          writexl::write_xlsx(df_bio(), file)
+        } else {
+          utils::write.csv(df_bio(), file, row.names = FALSE)
+        }
+      }
+    )
+
+    # Descargas Carbono Sitio
+    output$dl_carb_sitio_csv <- shiny::downloadHandler(
+      filename = function() { paste0("carbono_co2e_sitio_", Sys.Date(), ".csv") },
+      content = function(file) {
+        df_b <- df_bio()
+        df_sub <- if (!is.null(df_b)) df_b[, c("Sitio", "Biomasa_t", "Carbono_t", "CO2e_t")] else data.frame()
+        utils::write.csv(df_sub, file, row.names = FALSE)
+      }
+    )
+
+    output$dl_carb_sitio_xlsx <- shiny::downloadHandler(
+      filename = function() { paste0("carbono_co2e_sitio_", Sys.Date(), ".xlsx") },
+      content = function(file) {
+        df_b <- df_bio()
+        df_sub <- if (!is.null(df_b)) df_b[, c("Sitio", "Biomasa_t", "Carbono_t", "CO2e_t")] else data.frame()
+        if (requireNamespace("writexl", quietly = TRUE)) {
+          writexl::write_xlsx(df_sub, file)
+        } else {
+          utils::write.csv(df_sub, file, row.names = FALSE)
+        }
+      }
+    )
+
+    # Descargas Carbono Especie
+    output$dl_carb_sp_csv <- shiny::downloadHandler(
+      filename = function() { paste0("carbono_co2e_especie_", Sys.Date(), ".csv") },
+      content = function(file) {
+        df_sp <- carbono_especie()
+        utils::write.csv(if (!is.null(df_sp)) df_sp else data.frame(), file, row.names = FALSE)
+      }
+    )
+
+    output$dl_carb_sp_xlsx <- shiny::downloadHandler(
+      filename = function() { paste0("carbono_co2e_especie_", Sys.Date(), ".xlsx") },
+      content = function(file) {
+        df_sp <- carbono_especie()
+        df_save <- if (!is.null(df_sp)) df_sp else data.frame()
+        if (requireNamespace("writexl", quietly = TRUE)) {
+          writexl::write_xlsx(df_save, file)
+        } else {
+          utils::write.csv(df_save, file, row.names = FALSE)
+        }
+      }
+    )
 
     codigo_r_text <- shiny::reactive({
       fm <- ifelse(is.null(input$factor_forma), 0.70, input$factor_forma)
@@ -433,8 +598,8 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
         ")\n",
         "ggplot(df_long, aes(x = Sitio, y = Valor, fill = Metrica)) +\n",
         "  geom_col(position = 'dodge') +\n",
-        "  scale_fill_manual(values = c('Volumen (m3)' = '#1b4d3e', 'Biomasa (t)' = '#52b788')) +\n",
-        "  theme_minimal()\n"
+        "  scale_fill_manual(values = c('Volumen (m3)' = '#b08968', 'Biomasa (t)' = '#2f7d5c')) +\n",
+        "  theme_minimal(base_size = 12)\n"
       )
     })
 
@@ -456,7 +621,7 @@ mod_biomasa_volumen_server <- function(id, datos_reactive = NULL) {
         shiny::tags$p("Sintaxis R en ggplot2 lista para ejecutar en RStudio:"),
         shiny::tags$pre(
           id = ns("modal_code_bio"),
-          style = "background-color: #1e293b; color: #38bdf8; padding: 1rem; border-radius: 8px; max-height: 400px; overflow-y: auto;",
+          class = "code-block-scroll",
           codigo_r_text()
         )
       ))

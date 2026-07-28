@@ -14,6 +14,8 @@
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
     "Sitio", "Valor", "Metrica", "Sitio1", "Sitio2", "Similitud",
-    "Sitios", "Riqueza", "SD", "Clase", "Especie", "Componente", "frecuencia"
+    "Sitios", "Riqueza", "SD", "Clase", "Especie", "Componente", "frecuencia",
+    "Abundancia_Total", "Cobertura_Relativa_pct", "Cobertura_muestral_pct",
+    "Estadio", "Estado", "Proporcion_pct"
   ))
 }

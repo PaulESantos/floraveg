@@ -7,8 +7,8 @@ test_that("validate_inventario y standardize_inventory funcionan correctamente",
   expect_equal(names(df_std), c("sitio", "especie", "abundancia"))
   expect_equal(df_std$abundancia[1], 5)
 
-  expect_error(validate_inventario("no_df"), "El argumento 'datos' debe ser un data.frame")
-  expect_error(validate_inventario(data.frame(x = 1)), "Faltan las siguientes columnas requeridas")
+  expect_error(validate_inventario("no_df"), "datos")
+  expect_error(validate_inventario(data.frame(x = 1)), "Faltan columnas requeridas")
 })
 
 test_that("long_to_comm convierte data frame a matriz de sitio x especie", {

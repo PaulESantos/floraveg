@@ -1,5 +1,9 @@
 #' Base de Datos de Referencia Neotropical para Densidad Básica de la Madera (g/cm³)
+#'
+#' @return Vector numérico nombrado con valores de densidad básica de la madera (g/cm3).
 #' @export
+#' @examples
+#' head(densidades_referencia_neotropical)
 densidades_referencia_neotropical <- c(
   "Cedrela odorata" = 0.45,
   "Swietenia macrophylla" = 0.53,

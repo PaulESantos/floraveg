@@ -1,7 +1,14 @@
 /* Theme and layout custom styling for floraveg Shiny App */
 :root {
+  /* Keep synchronized with R/fv_palette.R */
   --fv-forest: #173f35;
+  --fv-brand: #1b4d3e;
   --fv-leaf: #2f7d5c;
+  --fv-soil: #b08968;
+  --fv-water: #3a86c8;
+  --fv-amber: #d98e2f;
+  --fv-flower: #8a4fae;
+  --fv-danger: #c94f4f;
   --fv-mint: #dcefe7;
   --fv-aqua: #d7eef2;
   --fv-ink: #172033;
@@ -29,9 +36,9 @@ body {
 }
 
 .navbar-brand {
+  font-family: Georgia, "Source Serif 4", "Times New Roman", serif;
   font-weight: 700;
   font-size: 1.4rem;
-  letter-spacing: 0;
   color: #e2f1e7 !important;
 }
 
@@ -58,7 +65,6 @@ body {
   border-radius: 8px 8px 0 0;
   color: var(--fv-leaf);
   font-weight: 600;
-  letter-spacing: 0;
   padding: 0.72rem 0.9rem;
 }
 
@@ -91,20 +97,34 @@ body {
 
 .card-header {
   border-bottom: 1px solid var(--fv-line);
+  font-family: Georgia, "Source Serif 4", "Times New Roman", serif;
   font-weight: 600;
   border-radius: 8px 8px 0 0 !important;
   padding: 0.9rem 1.2rem;
 }
 
-.bg-primary,
-.bg-success,
-.bg-secondary,
+.bg-primary {
+  background-image: linear-gradient(135deg, var(--fv-brand), var(--fv-leaf)) !important;
+}
+
+.bg-success {
+  background-image: linear-gradient(135deg, var(--fv-leaf), #27684f) !important;
+}
+
+.bg-secondary {
+  background-image: linear-gradient(135deg, var(--fv-water), #2f6f9f) !important;
+}
+
 .bg-dark {
-  background-image: linear-gradient(135deg, var(--fv-forest), var(--fv-leaf)) !important;
+  background-image: linear-gradient(135deg, #102c25, var(--fv-brand)) !important;
 }
 
 .bg-warning {
-  background-color: #f5d66b !important;
+  background-color: var(--fv-amber) !important;
+}
+
+.bg-danger {
+  background-color: var(--fv-danger) !important;
 }
 
 .alert {
@@ -122,15 +142,16 @@ body {
 }
 
 .metric-value {
+  font-family: "Fira Code", Consolas, monospace;
   font-size: 2rem;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
   color: var(--fv-forest);
 }
 
 .metric-label {
   font-size: 0.85rem;
   text-transform: uppercase;
-  letter-spacing: 0;
   color: var(--fv-muted);
 }
 
@@ -196,12 +217,36 @@ body {
 
 pre, code, .shiny-bound-output pre {
   font-family: "Fira Code", Consolas, monospace;
-  background-color: #1e293b !important;
-  color: #38bdf8 !important;
+  background-color: #0d211c !important;
+  color: #dcefe7 !important;
   border-radius: 8px;
   padding: 1rem;
-  border: 1px solid #334155;
+  border: 1px solid #255846;
   font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.code-block-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--fv-ink);
+}
+
+h1, h2, h3,
+.card-header h1,
+.card-header h2,
+.card-header h3,
+.card-header h4 {
+  font-family: Georgia, "Source Serif 4", "Times New Roman", serif;
+}
+
+.dataTables_wrapper table,
+.dataTables_wrapper td,
+.dataTables_wrapper th {
+  font-variant-numeric: tabular-nums;
 }
 
 .form-control,

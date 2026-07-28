@@ -87,6 +87,8 @@ mod_diversidad_ui <- function(id) {
       shiny::h4(class = "card-header bg-dark text-white mb-3", shiny::icon("chart-line"), " 3. Curva Especie-\u00c1rea & Estimadores de Riqueza"),
       plotly::plotlyOutput(ns("plot_acumulacion"), height = "400px"),
       shiny::hr(),
+      shiny::uiOutput(ns("resumen_representatividad")),
+      shiny::hr(),
       shiny::h5(class = "font-weight-bold text-secondary mb-2", "Estimadores de Riqueza Esperada (Chao1, Jackknife, Bootstrap):"),
       shiny::tableOutput(ns("tabla_estimadores"))
     ),
@@ -186,6 +188,40 @@ mod_diversidad_ui <- function(id) {
         )
       ),
       DT::DTOutput(ns("tabla_whittaker"))
+    ),
+    shiny::div(
+      class = "card p-3 mb-4 shadow-sm",
+      shiny::h4(class = "card-header bg-success text-white mb-3", shiny::icon("magnifying-glass-chart"), " 6. Rareza, Ocurrencia y Completitud por Sitio"),
+      shiny::fluidRow(
+        shiny::column(
+          width = 6,
+          shiny::div(
+            class = "d-flex justify-content-between align-items-center mb-2",
+            shiny::h5(class = "mb-0 font-weight-bold", "Ocurrencia y Rareza de Especies"),
+            shiny::div(
+              class = "d-flex gap-1",
+              shiny::downloadButton(ns("dl_ocurrencia_csv"), "CSV", class = "btn-outline-primary btn-sm", icon = shiny::icon("file-csv")),
+              shiny::downloadButton(ns("dl_ocurrencia_xlsx"), "Excel", class = "btn-outline-success btn-sm", icon = shiny::icon("file-excel"))
+            )
+          ),
+          DT::DTOutput(ns("tabla_ocurrencia"))
+        ),
+        shiny::column(
+          width = 6,
+          shiny::div(
+            class = "d-flex justify-content-between align-items-center mb-2",
+            shiny::h5(class = "mb-0 font-weight-bold", "Completitud Muestral por Sitio"),
+            shiny::div(
+              class = "d-flex gap-1",
+              shiny::downloadButton(ns("dl_completitud_csv"), "CSV", class = "btn-outline-primary btn-sm", icon = shiny::icon("file-csv")),
+              shiny::downloadButton(ns("dl_completitud_xlsx"), "Excel", class = "btn-outline-success btn-sm", icon = shiny::icon("file-excel"))
+            )
+          ),
+          DT::DTOutput(ns("tabla_completitud_sitio"))
+        )
+      ),
+      shiny::hr(),
+      plotly::plotlyOutput(ns("plot_completitud_sitio"), height = "360px")
     )
   )
 }
@@ -354,10 +390,10 @@ mod_diversidad_server <- function(id, datos_reactive = NULL) {
         if (requireNamespace("ggdendro", quietly = TRUE)) {
           ddata <- ggdendro::dendro_data(hc, type = "rectangle")
           p <- ggplot2::ggplot(ddata$segments) +
-            ggplot2::geom_segment(ggplot2::aes(x = x, y = y, xend = xend, yend = yend), color = "#1b4d3e", linewidth = 0.9) +
-            ggplot2::geom_text(data = ddata$labels, ggplot2::aes(x = x, y = y, label = label), hjust = 1, angle = 90, size = 3.8, color = "#0f172a") +
+            ggplot2::geom_segment(ggplot2::aes(x = x, y = y, xend = xend, yend = yend), color = fv_pal[["marca"]], linewidth = 0.9) +
+            ggplot2::geom_text(data = ddata$labels, ggplot2::aes(x = x, y = y, label = label), hjust = 1, angle = 90, size = 3.8, color = fv_pal[["tinta"]]) +
             ggplot2::scale_y_continuous(limits = c(-0.05, max(ddata$segments$y, 0.5) * 1.15), name = "Disimilitud (1 - Similitud)") +
-            ggplot2::theme_minimal() +
+            fv_chart_theme() +
             ggplot2::labs(
               title = paste0("Dendrograma de Agrupamiento Jer\u00e1rquico UPGMA (", toupper(metodo_sel()), ")"),
               x = "Sitio / Parcela"
@@ -374,7 +410,7 @@ mod_diversidad_server <- function(id, datos_reactive = NULL) {
         p <- ggplot2::ggplot(df_grid, ggplot2::aes(x = Sitio1, y = Sitio2, fill = Similitud)) +
           ggplot2::geom_tile(color = "white") +
           ggplot2::scale_fill_viridis_c(option = "viridis", limits = c(0, 1)) +
-          ggplot2::theme_minimal() +
+          fv_chart_theme() +
           ggplot2::labs(title = paste0("Matriz de Similitud - \u00cdndice de ", toupper(metodo_sel()), " (0 a 1)"), x = "Sitio / Parcela", y = "Sitio / Parcela") +
           ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
 
@@ -390,10 +426,10 @@ mod_diversidad_server <- function(id, datos_reactive = NULL) {
       df_acc <- data.frame(Sitios = sa$sites, Riqueza = sa$richness, SD = sa$sd)
 
       p <- ggplot2::ggplot(df_acc, ggplot2::aes(x = Sitios, y = Riqueza)) +
-        ggplot2::geom_ribbon(ggplot2::aes(ymin = pmax(0, Riqueza - SD), ymax = Riqueza + SD), fill = "#52b788", alpha = 0.3) +
-        ggplot2::geom_line(color = "#1b4d3e", linewidth = 1.2) +
-        ggplot2::geom_point(color = "#1b4d3e", size = 3) +
-        ggplot2::theme_minimal() +
+        ggplot2::geom_ribbon(ggplot2::aes(ymin = pmax(0, Riqueza - SD), ymax = Riqueza + SD), fill = fv_pal[["menta"]], alpha = 0.7) +
+        ggplot2::geom_line(color = fv_pal[["marca"]], linewidth = 1.2) +
+        ggplot2::geom_point(color = fv_pal[["agua"]], size = 3) +
+        fv_chart_theme() +
         ggplot2::labs(
           title = "Curva Especie-\u00c1rea (Acumulaci\u00f3n Permutada)",
           x = "N\u00famero de Muestras/Sitios",
@@ -408,6 +444,41 @@ mod_diversidad_server <- function(id, datos_reactive = NULL) {
       shiny::req(df)
       estimadores_riqueza(df)
     }, digits = 2)
+
+    clench_resumen <- shiny::reactive({
+      df <- datos_modulo()
+      shiny::req(df)
+      if (length(unique(df$sitio)) < 2) return(NULL)
+      tryCatch(modelo_clench(df), error = function(e) NULL)
+    })
+
+    output$resumen_representatividad <- shiny::renderUI({
+      cl <- clench_resumen()
+      shiny::validate(shiny::need(!is.null(cl), "No fue posible ajustar el modelo de Clench con el inventario activo."))
+
+      rep_pct <- round(cl$representatividad_pct, 1)
+      estado <- if (is.na(rep_pct)) {
+        list(label = "No evaluable", class = "bg-secondary text-white", icon = "circle-question")
+      } else if (rep_pct < 70) {
+        list(label = "Insuficiente", class = "bg-danger text-white", icon = "triangle-exclamation")
+      } else if (rep_pct <= 85) {
+        list(label = "Aceptable", class = "bg-warning text-dark", icon = "circle-info")
+      } else {
+        list(label = "Robusto", class = "bg-success text-white", icon = "circle-check")
+      }
+
+      shiny::div(
+        class = "d-flex justify-content-between align-items-stretch gap-3 flex-wrap",
+        shiny::div(class = "metric-card p-3 rounded bg-light border", shiny::div(class = "metric-value", cl$riqueza_observada), shiny::div(class = "metric-label", "Riqueza Observada")),
+        shiny::div(class = "metric-card p-3 rounded bg-light border", shiny::div(class = "metric-value", round(cl$asintota_estimada, 1)), shiny::div(class = "metric-label", "Riqueza Asintotica")),
+        shiny::div(class = "metric-card p-3 rounded bg-light border", shiny::div(class = "metric-value", paste0(rep_pct, "%")), shiny::div(class = "metric-label", "Representatividad")),
+        shiny::div(
+          class = paste("metric-card p-3 rounded border d-flex flex-column justify-content-center", estado$class),
+          shiny::div(class = "h4 font-weight-bold mb-1", shiny::icon(estado$icon), " ", estado$label),
+          shiny::div(class = "small", "Semaforo tecnico del esfuerzo de muestreo")
+        )
+      )
+    })
 
     inext_calc <- shiny::reactive({
       df <- datos_modulo()
@@ -448,7 +519,7 @@ mod_diversidad_server <- function(id, datos_reactive = NULL) {
           }
         }
         p <- p +
-          ggplot2::theme_minimal() +
+          fv_chart_theme() +
           ggplot2::labs(
             title = paste0("Curva iNEXT (Tipo ", type_val, ") - Rarefacci\u00f3n & Extrapolaci\u00f3n"),
             subtitle = "Metodolog\u00eda de Chao et al. basada en N\u00fameros de Hill"
@@ -524,6 +595,88 @@ mod_diversidad_server <- function(id, datos_reactive = NULL) {
       DT::datatable(df_w, options = list(pageLength = 6, scrollX = TRUE), style = "bootstrap4")
     })
 
+    ocurrencia_resumen <- shiny::reactive({
+      df <- datos_modulo()
+      shiny::req(df)
+      mat <- long_to_comm(df)
+      freq_sp <- colSums(mat > 0)
+      abund_sp <- colSums(mat, na.rm = TRUE)
+      n_sites <- nrow(mat)
+
+      res <- data.frame(
+        Especie = names(freq_sp),
+        Sitios_Ocupados = as.integer(freq_sp),
+        Ocurrencia_pct = round((freq_sp / n_sites) * 100, 2),
+        Abundancia_Total = as.numeric(abund_sp),
+        Categoria = ifelse(freq_sp == 1, "Unica en un sitio",
+                    ifelse(abund_sp == 1, "Singleton",
+                    ifelse(abund_sp == 2, "Doubleton", "Compartida / frecuente"))),
+        stringsAsFactors = FALSE
+      )
+      res[order(res$Sitios_Ocupados, res$Abundancia_Total), ]
+    })
+
+    output$tabla_ocurrencia <- DT::renderDT({
+      DT::datatable(
+        ocurrencia_resumen(),
+        options = list(pageLength = 8, scrollX = TRUE),
+        rownames = FALSE,
+        style = "bootstrap4"
+      )
+    })
+
+    completitud_sitio <- shiny::reactive({
+      df <- datos_modulo()
+      shiny::req(df)
+      mat <- long_to_comm(df)
+      rows <- lapply(seq_len(nrow(mat)), function(i) {
+        abund <- mat[i, ]
+        n <- sum(abund, na.rm = TRUE)
+        s_obs <- sum(abund > 0, na.rm = TRUE)
+        f1 <- sum(abund == 1, na.rm = TRUE)
+        cobertura <- if (n > 0) pmax(0, 1 - (f1 / n)) * 100 else NA_real_
+        data.frame(
+          Sitio = rownames(mat)[i],
+          N_individuos = as.numeric(n),
+          Riqueza_observada = as.integer(s_obs),
+          Singleton = as.integer(f1),
+          Cobertura_muestral_pct = round(cobertura, 2),
+          Estado = ifelse(is.na(cobertura), "No evaluable",
+                   ifelse(cobertura < 70, "Submuestreo probable",
+                   ifelse(cobertura <= 85, "Completitud aceptable", "Completitud robusta"))),
+          stringsAsFactors = FALSE
+        )
+      })
+      do.call(rbind, rows)
+    })
+
+    output$tabla_completitud_sitio <- DT::renderDT({
+      DT::datatable(
+        completitud_sitio(),
+        options = list(pageLength = 8, scrollX = TRUE),
+        rownames = FALSE,
+        style = "bootstrap4"
+      )
+    })
+
+    output$plot_completitud_sitio <- plotly::renderPlotly({
+      df_c <- completitud_sitio()
+      shiny::req(df_c)
+      p <- ggplot2::ggplot(df_c, ggplot2::aes(x = Sitio, y = Cobertura_muestral_pct, fill = Estado)) +
+        ggplot2::geom_col(alpha = 0.9) +
+        ggplot2::geom_hline(yintercept = c(70, 85), linetype = "dashed", color = fv_pal[["neutro"]]) +
+        fv_scale_fill(c("Submuestreo probable", "Completitud aceptable", "Completitud robusta", "No evaluable")) +
+        fv_chart_theme() +
+        ggplot2::labs(
+          title = "Completitud muestral estimada por sitio",
+          x = "Sitio / Parcela",
+          y = "Cobertura muestral (%)",
+          fill = "Estado"
+        ) +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
+      plotly::ggplotly(p)
+    })
+
     # Descarga Whittaker CSV
     output$dl_whittaker_csv <- shiny::downloadHandler(
       filename = function() { paste0("whittaker_rank_abundance_", Sys.Date(), ".csv") },
@@ -538,6 +691,42 @@ mod_diversidad_server <- function(id, datos_reactive = NULL) {
           writexl::write_xlsx(df_whittaker(), file)
         } else {
           utils::write.csv(df_whittaker(), file, row.names = FALSE)
+        }
+      }
+    )
+
+    # Descarga Ocurrencia y Rareza CSV
+    output$dl_ocurrencia_csv <- shiny::downloadHandler(
+      filename = function() { paste0("ocurrencia_rareza_especies_", Sys.Date(), ".csv") },
+      content = function(file) { utils::write.csv(ocurrencia_resumen(), file, row.names = FALSE) }
+    )
+
+    # Descarga Ocurrencia y Rareza Excel
+    output$dl_ocurrencia_xlsx <- shiny::downloadHandler(
+      filename = function() { paste0("ocurrencia_rareza_especies_", Sys.Date(), ".xlsx") },
+      content = function(file) {
+        if (requireNamespace("writexl", quietly = TRUE)) {
+          writexl::write_xlsx(ocurrencia_resumen(), file)
+        } else {
+          utils::write.csv(ocurrencia_resumen(), file, row.names = FALSE)
+        }
+      }
+    )
+
+    # Descarga Completitud por Sitio CSV
+    output$dl_completitud_csv <- shiny::downloadHandler(
+      filename = function() { paste0("completitud_muestral_sitio_", Sys.Date(), ".csv") },
+      content = function(file) { utils::write.csv(completitud_sitio(), file, row.names = FALSE) }
+    )
+
+    # Descarga Completitud por Sitio Excel
+    output$dl_completitud_xlsx <- shiny::downloadHandler(
+      filename = function() { paste0("completitud_muestral_sitio_", Sys.Date(), ".xlsx") },
+      content = function(file) {
+        if (requireNamespace("writexl", quietly = TRUE)) {
+          writexl::write_xlsx(completitud_sitio(), file)
+        } else {
+          utils::write.csv(completitud_sitio(), file, row.names = FALSE)
         }
       }
     )
@@ -579,7 +768,7 @@ mod_diversidad_server <- function(id, datos_reactive = NULL) {
         shiny::tags$p("Sintaxis R lista para ejecutar en RStudio:"),
         shiny::tags$pre(
           id = ns("modal_code_div"),
-          style = "background-color: #1e293b; color: #38bdf8; padding: 1rem; border-radius: 8px; max-height: 400px; overflow-y: auto;",
+          class = "code-block-scroll",
           codigo_r_text()
         )
       ))

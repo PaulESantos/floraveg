@@ -1,4 +1,79 @@
 url: https://paulesantos.github.io/floraveg/
 template:
   bootstrap: 5
+  bootswatch: flatly
 
+home:
+  title: "floraveg: Indicadores Ecológicos y de Vegetación según Guía MINAM"
+
+navbar:
+  structure:
+    left: [home, intro, reference, news]
+    right: [search, github]
+  components:
+    home:
+      icon: fa-home fa-lg
+      href: index.html
+      aria-label: Inicio
+    reference:
+      text: Referencia de Funciones
+      href: reference/index.html
+    news:
+      text: Novedades
+      href: news/index.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/PaulESantos/floraveg
+      aria-label: Repositorio GitHub
+
+reference:
+  - title: "1. Carga, Estandarización y Datos de Ejemplo"
+    desc: "Funciones para estandarizar y validar inventarios florísticos y datos de prueba neotropicales."
+    contents:
+      - standardize_inventory
+      - validate_inventario
+      - long_to_comm
+      - dune_t
+      - bci_t
+
+  - title: "2. Diversidad Alfa, Beta y Curvas de Acumulación"
+    desc: "Índices de riqueza, equidad (Shannon, Pielou), dominancia (Simpson), similitud (Beta, Sørensen) y curvas de rango-abundancia (Whittaker)."
+    contents:
+      - diversidad_alfa
+      - diversidad_beta
+      - diversidad_shannon
+      - diversidad_pielou
+      - diversidad_simpson
+      - diversidad_sorensen
+      - curva_acumulacion
+      - modelo_clench
+      - estimadores_riqueza
+      - curva_whittaker
+      - plot_whittaker
+
+  - title: "3. Parámetros Estructurales e Índice de Valor de Importancia (IVI)"
+    desc: "Cálculo de abundancia, frecuencia, dominancia (área basal, cobertura), distribución diamétrica y posición sociológica / regeneración."
+    contents:
+      - abundancia
+      - frecuencia
+      - area_basal
+      - cobertura
+      - densidad_poblacional
+      - distribucion_diametrica
+      - calc_ivi
+      - regeneracion_natural
+      - proporcion_fenologia
+
+  - title: "4. Biomasa Aérea (AGB) y Volumen Maderable"
+    desc: "Estimación de biomasa aérea leñosa (Chave et al. 2014), volumen maderable y base de datos de densidad de madera neotropical."
+    contents:
+      - biomasa_aerea
+      - volumen_maderable
+      - obtener_densidad_madera
+      - densidades_referencia_neotropical
+
+  - title: "5. Interfaz Gráfica Shiny (Aplicación y Módulos Standalone)"
+    desc: "Lanzadores para la aplicación web interactiva completa o módulos independientes en Shiny."
+    contents:
+      - run_floraveg
+      - run_modules

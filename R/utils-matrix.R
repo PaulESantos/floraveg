@@ -6,6 +6,9 @@
 #'
 #' @return Data frame estandarizado con las columnas 'sitio', 'especie' y 'abundancia'.
 #' @export
+#' @examples
+#' df <- data.frame(plot = c("P1", "P1"), species = c("SpA", "SpB"), count = c(5, 2))
+#' standardize_inventory(df)
 standardize_inventory <- function(datos) {
   if (!is.data.frame(datos)) return(datos)
 
@@ -47,16 +50,19 @@ standardize_inventory <- function(datos) {
 #' validate_inventario(df, c("sitio", "especie"))
 validate_inventario <- function(datos, required_cols = c("sitio", "especie")) {
   if (!is.data.frame(datos)) {
-    stop("El argumento 'datos' debe ser un data.frame o tibble.", call. = FALSE)
+    cli::cli_abort(c(
+      "El argumento {.arg datos} debe ser un {.cls data.frame} o {.cls tibble}.",
+      "x" = "Se proveyo un objeto de tipo {.cls {class(datos)[1]}}."
+    ))
   }
   datos <- standardize_inventory(datos)
   missing_cols <- setdiff(required_cols, names(datos))
   if (length(missing_cols) > 0) {
-    stop(
-      paste0("Faltan las siguientes columnas requeridas en los datos: ",
-             paste(missing_cols, collapse = ", ")),
-      call. = FALSE
-    )
+    cli::cli_abort(c(
+      "Faltan columnas requeridas en los datos.",
+      "x" = "Falta{?n} la{?s} columna{?s}: {.field {missing_cols}}",
+      "i" = "Las columnas disponibles son: {.field {names(datos)}}"
+    ))
   }
   datos
 }

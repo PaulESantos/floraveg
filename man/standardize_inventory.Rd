@@ -15,3 +15,7 @@ Data frame estandarizado con las columnas 'sitio', 'especie' y 'abundancia'.
 \description{
 Mapea automaticamente variantes comunes de nombres de columnas (plot/sitio, species/especie, abundance/abundancia).
 }
+\examples{
+df <- data.frame(plot = c("P1", "P1"), species = c("SpA", "SpB"), count = c(5, 2))
+standardize_inventory(df)
+}

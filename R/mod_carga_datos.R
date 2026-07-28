@@ -50,7 +50,29 @@ mod_carga_datos_ui <- function(id) {
     ),
     shiny::div(
       class = "card p-3 mb-4 shadow-sm",
-      shiny::h4(class = "card-header bg-secondary text-white mb-3", shiny::icon("table"), " 3. Vista Previa de Registros Mapeados"),
+      shiny::div(
+        class = "d-flex justify-content-between align-items-center mb-3",
+        shiny::h4(class = "card-header bg-warning text-dark mb-0 flex-grow-1 me-2", shiny::icon("clipboard-check"), " Diagn\u00f3stico de Calidad de Datos"),
+        shiny::div(
+          class = "d-flex gap-2",
+          shiny::downloadButton(ns("dl_calidad_csv"), "Descargar CSV", class = "btn-outline-primary btn-sm", icon = shiny::icon("file-csv")),
+          shiny::downloadButton(ns("dl_calidad_xlsx"), "Descargar Excel (.xlsx)", class = "btn-outline-success btn-sm", icon = shiny::icon("file-excel"))
+        )
+      ),
+      shiny::uiOutput(ns("diagnostico_calidad")),
+      DT::DTOutput(ns("tabla_calidad_campos"))
+    ),
+    shiny::div(
+      class = "card p-3 mb-4 shadow-sm",
+      shiny::div(
+        class = "d-flex justify-content-between align-items-center mb-3",
+        shiny::h4(class = "card-header bg-secondary text-white mb-0 flex-grow-1 me-2", shiny::icon("table"), " 3. Vista Previa de Registros Mapeados"),
+        shiny::div(
+          class = "d-flex gap-2",
+          shiny::downloadButton(ns("dl_previa_csv"), "Descargar CSV", class = "btn-outline-primary btn-sm", icon = shiny::icon("file-csv")),
+          shiny::downloadButton(ns("dl_previa_xlsx"), "Descargar Excel (.xlsx)", class = "btn-outline-success btn-sm", icon = shiny::icon("file-excel"))
+        )
+      ),
       DT::DTOutput(ns("tabla_previa"))
     )
   )
@@ -202,7 +224,7 @@ mod_carga_datos_server <- function(id) {
         shiny::tags$p("Sintaxis R lista para ejecutar en RStudio:"),
         shiny::tags$pre(
           id = ns("modal_code_carga"),
-          style = "background-color: #1e293b; color: #38bdf8; padding: 1rem; border-radius: 8px; max-height: 400px; overflow-y: auto;",
+          class = "code-block-scroll",
           codigo_r_carga()
         )
       ))
@@ -241,6 +263,82 @@ mod_carga_datos_server <- function(id) {
       )
     })
 
+    calidad_datos <- shiny::reactive({
+      df <- datos_procesados()
+      shiny::req(df)
+
+      required <- c("sitio", "especie", "abundancia")
+      cols_presentes <- required %in% names(df)
+      names(cols_presentes) <- required
+
+      faltantes <- vapply(df, function(x) sum(is.na(x) | trimws(as.character(x)) == ""), integer(1))
+      no_positivos <- c(
+        dap_cm = if ("dap_cm" %in% names(df)) sum(!is.na(df$dap_cm) & df$dap_cm <= 0) else NA_integer_,
+        altura_m = if ("altura_m" %in% names(df)) sum(!is.na(df$altura_m) & df$altura_m <= 0) else NA_integer_
+      )
+
+      dens_ref <- if ("especie" %in% names(df)) obtener_densidad_madera(unique(df$especie), default = NA_real_) else numeric(0)
+      especies_sin_densidad <- sum(is.na(dens_ref))
+
+      dup_cols <- intersect(c("sitio", "especie", "dap_cm", "altura_m"), names(df))
+      duplicados <- if (length(dup_cols) >= 2) sum(duplicated(df[, dup_cols, drop = FALSE])) else 0
+
+      campos <- data.frame(
+        Indicador = c(
+          paste0("Columna requerida: ", names(cols_presentes)),
+          paste0("Valores faltantes: ", names(faltantes)),
+          "DAP no positivo",
+          "Altura no positiva",
+          "Especies sin densidad de madera espec\u00edfica",
+          "Duplicados potenciales"
+        ),
+        Valor = c(
+          ifelse(cols_presentes, "Presente", "Ausente"),
+          as.character(faltantes),
+          as.character(no_positivos["dap_cm"]),
+          as.character(no_positivos["altura_m"]),
+          as.character(especies_sin_densidad),
+          as.character(duplicados)
+        ),
+        Estado = c(
+          ifelse(cols_presentes, "OK", "Cr\u00edtico"),
+          ifelse(faltantes == 0, "OK", "Revisar"),
+          ifelse(is.na(no_positivos["dap_cm"]), "No aplica", ifelse(no_positivos["dap_cm"] == 0, "OK", "Revisar")),
+          ifelse(is.na(no_positivos["altura_m"]), "No aplica", ifelse(no_positivos["altura_m"] == 0, "OK", "Revisar")),
+          ifelse(especies_sin_densidad == 0, "OK", "Revisar"),
+          ifelse(duplicados == 0, "OK", "Revisar")
+        ),
+        stringsAsFactors = FALSE
+      )
+
+      list(campos = campos, n_revisar = sum(campos$Estado %in% c("Cr\u00edtico", "Revisar")))
+    })
+
+    output$diagnostico_calidad <- shiny::renderUI({
+      cal <- calidad_datos()
+      estado <- if (cal$n_revisar == 0) {
+        list(class = "alert-success", icon = "circle-check", label = "Sin observaciones cr\u00edticas")
+      } else {
+        list(class = "alert-warning", icon = "triangle-exclamation", label = paste(cal$n_revisar, "puntos requieren revisi\u00f3n"))
+      }
+
+      shiny::div(
+        class = paste("alert py-2 px-3", estado$class),
+        shiny::icon(estado$icon), " ",
+        shiny::strong(estado$label),
+        shiny::span(class = "ms-2", "El diagn\u00f3stico no detiene los an\u00e1lisis, pero orienta la revisi\u00f3n del inventario.")
+      )
+    })
+
+    output$tabla_calidad_campos <- DT::renderDT({
+      DT::datatable(
+        calidad_datos()$campos,
+        options = list(dom = 't', scrollX = TRUE),
+        rownames = FALSE,
+        style = "bootstrap4"
+      )
+    })
+
     output$tabla_previa <- DT::renderDT({
       DT::datatable(
         datos_procesados(),
@@ -248,6 +346,40 @@ mod_carga_datos_server <- function(id) {
         style = "bootstrap4"
       )
     })
+
+    # Descargas Calidad
+    output$dl_calidad_csv <- shiny::downloadHandler(
+      filename = function() { paste0("diagnostico_calidad_datos_", Sys.Date(), ".csv") },
+      content = function(file) { utils::write.csv(calidad_datos()$campos, file, row.names = FALSE) }
+    )
+
+    output$dl_calidad_xlsx <- shiny::downloadHandler(
+      filename = function() { paste0("diagnostico_calidad_datos_", Sys.Date(), ".xlsx") },
+      content = function(file) {
+        if (requireNamespace("writexl", quietly = TRUE)) {
+          writexl::write_xlsx(calidad_datos()$campos, file)
+        } else {
+          utils::write.csv(calidad_datos()$campos, file, row.names = FALSE)
+        }
+      }
+    )
+
+    # Descargas Previa Registros Mapeados
+    output$dl_previa_csv <- shiny::downloadHandler(
+      filename = function() { paste0("inventario_mapeado_", Sys.Date(), ".csv") },
+      content = function(file) { utils::write.csv(datos_procesados(), file, row.names = FALSE) }
+    )
+
+    output$dl_previa_xlsx <- shiny::downloadHandler(
+      filename = function() { paste0("inventario_mapeado_", Sys.Date(), ".xlsx") },
+      content = function(file) {
+        if (requireNamespace("writexl", quietly = TRUE)) {
+          writexl::write_xlsx(datos_procesados(), file)
+        } else {
+          utils::write.csv(datos_procesados(), file, row.names = FALSE)
+        }
+      }
+    )
 
     return(datos_procesados)
   })

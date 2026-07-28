@@ -6,6 +6,12 @@
 \usage{
 densidades_referencia_neotropical
 }
+\value{
+Vector numérico nombrado con valores de densidad básica de la madera (g/cm3).
+}
 \description{
 Base de Datos de Referencia Neotropical para Densidad Básica de la Madera (g/cm³)
+}
+\examples{
+head(densidades_referencia_neotropical)
 }
