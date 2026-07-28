@@ -32,8 +32,15 @@ y estándares ecológicos neotropicales.
 
 ## 🚀 Instalación
 
-Puedes instalar la versión de desarrollo de **`floraveg`** desde GitHub
-con:
+Puedes instalar la versión oficial enviada a **CRAN** con:
+
+``` r
+
+install.packages("floraveg")
+```
+
+O instalar la versión de desarrollo de **`floraveg`** desde
+[GitHub](https://github.com/PaulESantos/floraveg) con:
 
 ``` r
 

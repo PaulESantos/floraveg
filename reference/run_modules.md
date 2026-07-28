@@ -27,4 +27,17 @@ run_mod_codigo_r(launch.browser = TRUE)
 
 ## Value
 
-Objeto Shiny app.
+Objeto Shiny app (ejecución interactiva).
+
+## Examples
+
+``` r
+if (interactive()) {
+  run_mod_modelo_datos()
+  run_mod_diversidad()
+  run_mod_estructura()
+  run_mod_biomasa()
+  run_mod_ivi()
+  run_mod_codigo_r()
+}
+```

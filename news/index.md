@@ -1,6 +1,6 @@
 # Changelog
 
-## floraveg 0.0.0.9000
+## floraveg 0.1.0
 
 - Version inicial de desarrollo del paquete `floraveg`.
 - Implementación de estandarización y validación de esquemas de datos de

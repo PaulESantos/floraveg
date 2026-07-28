@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">floraveg</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,8 +69,11 @@
 <div class="section level2">
 <h2 id="rocket-instalación">🚀 Instalación<a class="anchor" aria-label="anchor" href="#rocket-instalaci%C3%B3n"></a>
 </h2>
-<p>Puedes instalar la versión de desarrollo de <strong><code>floraveg</code></strong> desde GitHub con:</p>
+<p>Puedes instalar la versión oficial enviada a <strong>CRAN</strong> con:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"floraveg"</span><span class="op">)</span></span></code></pre></div>
+<p>O instalar la versión de desarrollo de <strong><code>floraveg</code></strong> desde <a href="https://github.com/PaulESantos/floraveg" class="external-link">GitHub</a> con:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Instalar paquete devtools / remotes si no está disponible</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
@@ -83,12 +86,12 @@
 <div class="section level2">
 <h2 id="bulb-ejemplos-de-uso-con-resultados">💡 Ejemplos de Uso con Resultados<a class="anchor" aria-label="anchor" href="#bulb-ejemplos-de-uso-con-resultados"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PaulESantos/floraveg" class="external-link">floraveg</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="id_1-carga-y-estandarización-de-inventario">1. Carga y Estandarización de Inventario<a class="anchor" aria-label="anchor" href="#id_1-carga-y-estandarizaci%C3%B3n-de-inventario"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Cargar datos de ejemplo de bosque neotropical integrados</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"bci_t"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">bci_t</span><span class="op">)</span></span>
@@ -117,7 +120,7 @@
 <div class="section level3">
 <h3 id="id_2-análisis-de-diversidad-alfa">2. Análisis de Diversidad Alfa<a class="anchor" aria-label="anchor" href="#id_2-an%C3%A1lisis-de-diversidad-alfa"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calcular índices de diversidad alfa completos</span></span>
 <span><span class="va">alfa_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/diversidad_alfa.html">diversidad_alfa</a></span><span class="op">(</span><span class="va">matriz_com</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">alfa_res</span><span class="op">)</span></span>
@@ -138,7 +141,7 @@
 <div class="section level3">
 <h3 id="id_3-parámetros-estructurales-e-índice-de-valor-de-importancia-ivi">3. Parámetros Estructurales e Índice de Valor de Importancia (IVI)<a class="anchor" aria-label="anchor" href="#id_3-par%C3%A1metros-estructurales-e-%C3%ADndice-de-valor-de-importancia-ivi"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Crear datos de estructura forestal con DAP</span></span>
 <span><span class="va">inventario_dap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  sitio <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"P"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, each <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -171,7 +174,7 @@
 <div class="section level3">
 <h3 id="id_4-estimación-de-biomasa-aérea-agb-y-volumen-maderable">4. Estimación de Biomasa Aérea (AGB) y Volumen Maderable<a class="anchor" aria-label="anchor" href="#id_4-estimaci%C3%B3n-de-biomasa-a%C3%A9rea-agb-y-volumen-maderable"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calcular área basal (m2) y volumen maderable (m3)</span></span>
 <span><span class="va">ab</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/area_basal.html">area_basal</a></span><span class="op">(</span>dap_cm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25.4</span>, <span class="fl">42.1</span>, <span class="fl">68.0</span><span class="op">)</span>, unidad_salida <span class="op">=</span> <span class="st">"m2"</span><span class="op">)</span></span>
 <span><span class="va">volumen</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/volumen_maderable.html">volumen_maderable</a></span><span class="op">(</span></span>
@@ -194,13 +197,13 @@
 <h3 id="id_5-lanzar-la-aplicación-interactiva-shiny">5. Lanzar la Aplicación Interactiva Shiny<a class="anchor" aria-label="anchor" href="#id_5-lanzar-la-aplicaci%C3%B3n-interactiva-shiny"></a>
 </h3>
 <p>Para iniciar la aplicación web interactiva completa en tu navegador local:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PaulESantos/floraveg" class="external-link">floraveg</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Iniciar la aplicación interactiva principal</span></span>
 <span><span class="fu"><a href="reference/run_floraveg.html">run_floraveg</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>O si prefieres ejecutar un módulo específico de forma independiente:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Ejemplo: ejecutar solo el módulo de Diversidad</span></span>
 <span><span class="fu"><a href="reference/run_modules.html">run_mod_diversidad</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <hr>
