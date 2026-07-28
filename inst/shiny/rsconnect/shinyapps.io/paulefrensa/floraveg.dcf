@@ -5,6 +5,6 @@ account: paulefrensa
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 17646184
-bundleId:
+bundleId: 12332288
 url: https://paulefrensa.shinyapps.io/floraveg/
 version: 1

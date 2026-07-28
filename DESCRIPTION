@@ -19,13 +19,13 @@ Imports:
     readxl,
     writexl,
     rmarkdown,
+    ggdendro,
+    iNEXT,
     stats,
     rlang,
     cli
 Suggests: 
-    testthat (>= 3.0.0),
-    ggdendro,
-    iNEXT
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
