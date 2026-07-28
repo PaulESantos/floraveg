@@ -1,12 +1,10 @@
 # floraveg
 
+------------------------------------------------------------------------
+
 **`floraveg`** es un paquete de R diseñado para automatizar el
 procesamiento, estandarización y análisis de inventarios florísticos y
-de vegetación, siguiendo estrictamente la **Guía de Inventario de la
-Flora y Vegetación del Ministerio del Ambiente del Perú (MINAM, 2015)**
-y estándares ecológicos neotropicales.
-
-------------------------------------------------------------------------
+de vegetación.
 
 ## 🌿 Características Principales
 
