@@ -11,3 +11,7 @@
 ^source-doc$
 ^\.agents$
 ^README\.html$
+^check-cran$
+^inst/shiny/rsconnect$
+^inst/shiny/report/.*\.log$
+^inst/shiny/report/test_report_files$

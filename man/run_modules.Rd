@@ -26,8 +26,18 @@ run_mod_codigo_r(launch.browser = TRUE)
 \item{launch.browser}{Lógico; abre en el navegador. Por defecto TRUE.}
 }
 \value{
-Objeto Shiny app.
+Objeto Shiny app (ejecución interactiva).
 }
 \description{
 Estas funciones permiten ejecutar cada módulo de la aplicación Shiny de forma 100\% independiente.
+}
+\examples{
+if (interactive()) {
+  run_mod_modelo_datos()
+  run_mod_diversidad()
+  run_mod_estructura()
+  run_mod_biomasa()
+  run_mod_ivi()
+  run_mod_codigo_r()
+}
 }

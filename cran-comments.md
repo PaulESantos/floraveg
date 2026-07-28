@@ -6,7 +6,7 @@
 
 0 errors | 0 warnings | 0 notes
 
-* This is a new package release submission for floraveg.
+* This is a new package release submission for floraveg (v0.1.0).
 
 ## Method References
 
