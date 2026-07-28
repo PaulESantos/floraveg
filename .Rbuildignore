@@ -10,3 +10,4 @@
 ^pkgdown$
 ^source-doc$
 ^\.agents$
+^README\.html$
