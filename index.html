@@ -81,17 +81,24 @@
 <hr>
 </div>
 <div class="section level2">
-<h2 id="bulb-ejemplos-de-uso">💡 Ejemplos de Uso<a class="anchor" aria-label="anchor" href="#bulb-ejemplos-de-uso"></a>
+<h2 id="bulb-ejemplos-de-uso-con-resultados">💡 Ejemplos de Uso con Resultados<a class="anchor" aria-label="anchor" href="#bulb-ejemplos-de-uso-con-resultados"></a>
 </h2>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PaulESantos/floraveg" class="external-link">floraveg</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="id_1-carga-y-estandarización-de-inventario">1. Carga y Estandarización de Inventario<a class="anchor" aria-label="anchor" href="#id_1-carga-y-estandarizaci%C3%B3n-de-inventario"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PaulESantos/floraveg" class="external-link">floraveg</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Cargar datos de ejemplo de bosque neotropical integrados</span></span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Cargar datos de ejemplo de bosque neotropical integrados</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"bci_t"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">bci_t</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">bci_t</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   plot                 species abundance</span></span>
+<span><span class="co">#&gt; 1    1 Alchornea costaricensis         2</span></span>
+<span><span class="co">#&gt; 2    1        Alseis blackiana        25</span></span>
+<span><span class="co">#&gt; 3    1         Annona spraguei         1</span></span>
+<span><span class="co">#&gt; 4    1           Apeiba glabra        13</span></span>
+<span><span class="co">#&gt; 5    1        Apeiba tibourbou         2</span></span>
+<span><span class="co">#&gt; 6    1    Astronium graveolens         6</span></span>
 <span></span>
 <span><span class="co"># Convertir un data frame de inventario (formato largo) a matriz de comunidad (sitio x especie)</span></span>
 <span><span class="va">inv_ejemplo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
@@ -101,25 +108,37 @@
 <span>  abundancia <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">2</span>, <span class="fl">8</span>, <span class="fl">3</span>, <span class="fl">12</span>, <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">matriz_com</span> <span class="op">&lt;-</span> <span class="fu">df_to_community_matrix</span><span class="op">(</span><span class="va">inv_ejemplo</span>, sitio <span class="op">=</span> <span class="st">"sitio"</span>, especie <span class="op">=</span> <span class="st">"especie"</span>, abundancia <span class="op">=</span> <span class="st">"abundancia"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">matriz_com</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">matriz_com</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/long_to_comm.html">long_to_comm</a></span><span class="op">(</span><span class="va">inv_ejemplo</span>, sitio <span class="op">=</span> <span class="st">"sitio"</span>, especie <span class="op">=</span> <span class="st">"especie"</span>, abundancia <span class="op">=</span> <span class="st">"abundancia"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">matriz_com</span><span class="op">)</span></span>
+<span><span class="co">#&gt;           Cedrela odorata Ceiba pentandra Guarea guidonia Inga edulis</span></span>
+<span><span class="co">#&gt; Parcela_1               5               2               0           8</span></span>
+<span><span class="co">#&gt; Parcela_2               3               0              12           4</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="id_2-análisis-de-diversidad-alfa-y-curva-de-acumulación">2. Análisis de Diversidad Alfa y Curva de Acumulación<a class="anchor" aria-label="anchor" href="#id_2-an%C3%A1lisis-de-diversidad-alfa-y-curva-de-acumulaci%C3%B3n"></a>
+<h3 id="id_2-análisis-de-diversidad-alfa">2. Análisis de Diversidad Alfa<a class="anchor" aria-label="anchor" href="#id_2-an%C3%A1lisis-de-diversidad-alfa"></a>
 </h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Calcular índices de diversidad alfa completosa</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Calcular índices de diversidad alfa completos</span></span>
 <span><span class="va">alfa_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/diversidad_alfa.html">diversidad_alfa</a></span><span class="op">(</span><span class="va">matriz_com</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">alfa_res</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       sitio n_individuos riqueza_s shannon_h  pielou_j gini_simpson simpson_inv</span></span>
+<span><span class="co">#&gt; 1 Parcela_1           15         3  1.399581 0.8830374    0.5866667    2.419355</span></span>
+<span><span class="co">#&gt; 2 Parcela_2           19         3  1.312431 0.8280516    0.5318560    2.136095</span></span>
+<span><span class="co">#&gt;    margalef menhinick  mcintosh</span></span>
+<span><span class="co">#&gt; 1 0.7385387 0.7745967 0.4813823</span></span>
+<span><span class="co">#&gt; 2 0.6792465 0.6882472 0.4098052</span></span>
 <span></span>
 <span><span class="co"># Calcular índice de Shannon-Wiener</span></span>
 <span><span class="va">shannon_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/diversidad_shannon.html">diversidad_shannon</a></span><span class="op">(</span><span class="va">matriz_com</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">shannon_res</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">shannon_res</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       sitio shannon_h base_log</span></span>
+<span><span class="co">#&gt; 1 Parcela_1  1.399581        2</span></span>
+<span><span class="co">#&gt; 2 Parcela_2  1.312431        2</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_3-parámetros-estructurales-e-índice-de-valor-de-importancia-ivi">3. Parámetros Estructurales e Índice de Valor de Importancia (IVI)<a class="anchor" aria-label="anchor" href="#id_3-par%C3%A1metros-estructurales-e-%C3%ADndice-de-valor-de-importancia-ivi"></a>
 </h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Crear datos de estructura forestal con DAP</span></span>
 <span><span class="va">inventario_dap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  sitio <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"P"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, each <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -129,7 +148,7 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calcular el Índice de Valor de Importancia (IVI) por especie</span></span>
-<span><span class="va">tabla_ivi</span> <span class="op">&lt;-</span> <span class="fu">calcular_ivi</span><span class="op">(</span></span>
+<span><span class="va">tabla_ivi</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/calc_ivi.html">calc_ivi</a></span><span class="op">(</span></span>
 <span>  datos <span class="op">=</span> <span class="va">inventario_dap</span>,</span>
 <span>  sitio <span class="op">=</span> <span class="st">"sitio"</span>,</span>
 <span>  especie <span class="op">=</span> <span class="st">"especie"</span>,</span>
@@ -137,50 +156,55 @@
 <span>  dap_cm <span class="op">=</span> <span class="st">"dap_cm"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tabla_ivi</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tabla_ivi</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                 especie n_individuos abundancia_rel_pct area_basal_m2</span></span>
+<span><span class="co">#&gt; 1       Ceiba pentandra            6           7.692308    1.51189500</span></span>
+<span><span class="co">#&gt; 2       Cedrela odorata           30          38.461538    0.18134886</span></span>
+<span><span class="co">#&gt; 3 Swietenia macrophylla           15          19.230769    0.48105750</span></span>
+<span><span class="co">#&gt; 4           Inga edulis           27          34.615385    0.07453446</span></span>
+<span><span class="co">#&gt;   dominancia_rel_pct frecuencia_rel_pct      ivi</span></span>
+<span><span class="co">#&gt; 1          67.230119                 25 99.92243</span></span>
+<span><span class="co">#&gt; 2           8.064122                 25 71.52566</span></span>
+<span><span class="co">#&gt; 3          21.391402                 25 65.62217</span></span>
+<span><span class="co">#&gt; 4           3.314358                 25 62.92974</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_4-estimación-de-biomasa-aérea-agb-y-volumen-maderable">4. Estimación de Biomasa Aérea (AGB) y Volumen Maderable<a class="anchor" aria-label="anchor" href="#id_4-estimaci%C3%B3n-de-biomasa-a%C3%A9rea-agb-y-volumen-maderable"></a>
 </h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Calcular biomasa aérea (AGB en toneladas) usando modelo de Chave et al. (2014)</span></span>
-<span><span class="va">biomasa</span> <span class="op">&lt;-</span> <span class="fu">calcular_biomasa_agb</span><span class="op">(</span></span>
-<span>  dap_cm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25.4</span>, <span class="fl">42.1</span>, <span class="fl">68.0</span><span class="op">)</span>,</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Calcular área basal (m2) y volumen maderable (m3)</span></span>
+<span><span class="va">ab</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/area_basal.html">area_basal</a></span><span class="op">(</span>dap_cm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25.4</span>, <span class="fl">42.1</span>, <span class="fl">68.0</span><span class="op">)</span>, unidad_salida <span class="op">=</span> <span class="st">"m2"</span><span class="op">)</span></span>
+<span><span class="va">volumen</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/volumen_maderable.html">volumen_maderable</a></span><span class="op">(</span></span>
+<span>  area_basal_m2 <span class="op">=</span> <span class="va">ab</span>,</span>
 <span>  altura_m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14.5</span>, <span class="fl">22.0</span>, <span class="fl">31.0</span><span class="op">)</span>,</span>
-<span>  densidad_madera <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.55</span>, <span class="fl">0.62</span>, <span class="fl">0.48</span><span class="op">)</span></span>
+<span>  factor_forma <span class="op">=</span> <span class="fl">0.7</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">volumen</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.5143093 2.1437583 7.8807664</span></span>
+<span></span>
+<span><span class="co"># Calcular biomasa aérea (AGB en toneladas) a partir de densidad de madera y volumen</span></span>
+<span><span class="va">biomasa</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/biomasa_aerea.html">biomasa_aerea</a></span><span class="op">(</span></span>
+<span>  densidad_madera <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.55</span>, <span class="fl">0.62</span>, <span class="fl">0.48</span><span class="op">)</span>,</span>
+<span>  volumen_m3 <span class="op">=</span> <span class="va">volumen</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">biomasa</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Calcular volumen maderable (m3)</span></span>
-<span><span class="va">volumen</span> <span class="op">&lt;-</span> <span class="fu">calcular_volumen_maderable</span><span class="op">(</span></span>
-<span>  dap_cm <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">25.4</span>, <span class="fl">42.1</span>, <span class="fl">68.0</span><span class="op">)</span>,</span>
-<span>  altura_m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">14.5</span>, <span class="fl">22.0</span>, <span class="fl">31.0</span><span class="op">)</span>,</span>
-<span>  form_factor <span class="op">=</span> <span class="fl">0.7</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">volumen</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.2828701 1.3291301 3.7827679</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_5-lanzar-la-aplicación-interactiva-shiny">5. Lanzar la Aplicación Interactiva Shiny<a class="anchor" aria-label="anchor" href="#id_5-lanzar-la-aplicaci%C3%B3n-interactiva-shiny"></a>
 </h3>
 <p>Para iniciar la aplicación web interactiva completa en tu navegador local:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PaulESantos/floraveg" class="external-link">floraveg</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Iniciar la aplicación interactiva principal</span></span>
 <span><span class="fu"><a href="reference/run_floraveg.html">run_floraveg</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>O si prefieres ejecutar un módulo específico de forma independiente:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Ejemplo: ejecutar solo el módulo de Diversidad</span></span>
 <span><span class="fu"><a href="reference/run_modules.html">run_mod_diversidad</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
-</div>
-<div class="section level2">
-<h2 id="globe_with_meridians-sitio-web-y-documentación">🌐 Sitio Web y Documentación<a class="anchor" aria-label="anchor" href="#globe_with_meridians-sitio-web-y-documentaci%C3%B3n"></a>
-</h2>
-<p>La documentación completa de las funciones y tutoriales del paquete se encuentra disponible en el sitio web de <strong>pkgdown</strong>:</p>
-<p>👉 <strong><a href="https://paulesantos.github.io/floraveg/" class="uri">https://paulesantos.github.io/floraveg/</a></strong></p>
-<hr>
 </div>
 <div class="section level2">
 <h2 id="open_book-referencias">📖 Referencias<a class="anchor" aria-label="anchor" href="#open_book-referencias"></a>
@@ -193,12 +217,6 @@
 <li>
 <strong>Jongman, R. H. G., ter Braak, C. J. F., &amp; van Tongeren, O. F. R. (1987)</strong>. <em>Data Analysis in Community and Landscape Ecology</em>. Pudoc, Wageningen.</li>
 </ul>
-<hr>
-</div>
-<div class="section level2">
-<h2 id="page_facing_up-licencia">📄 Licencia<a class="anchor" aria-label="anchor" href="#page_facing_up-licencia"></a>
-</h2>
-<p>Este paquete se distribuye bajo la licencia <a href="LICENSE.html">MIT</a>. © Paul E. Santos Andrade.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
