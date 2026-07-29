@@ -10,12 +10,12 @@
 Source:
 [`DESCRIPTION`](https://github.com/PaulESantos/floraveg/blob/main/DESCRIPTION)
 
-Santos Andrade P (2026). *floraveg: Indicadores Ecológicos y de
-Vegetación según Guía MINAM*. R package version 0.1.0,
+Santos Andrade P (2026). *floraveg: Ecological and Vegetation
+Indicators*. R package version 0.1.0,
 <https://github.com/PaulESantos/floraveg>.
 
     @Manual{,
-      title = {floraveg: Indicadores Ecológicos y de Vegetación según Guía MINAM},
+      title = {floraveg: Ecological and Vegetation Indicators},
       author = {Paul E. {Santos Andrade}},
       year = {2026},
       note = {R package version 0.1.0},
