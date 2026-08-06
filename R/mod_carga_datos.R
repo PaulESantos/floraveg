@@ -85,26 +85,7 @@ mod_carga_datos_server <- function(id) {
     datos_raw <- shiny::reactive({
       src <- input$fuente_datos
       if (src == "ejemplo") {
-        set.seed(42)
-        especies <- c("Cedrela odorata", "Swietenia macrophylla", "Ceiba pentandra",
-                      "Guarea guidonia", "Inga edulis", "Dipteryx micrantha",
-                      "Buchenavia capitata", "Eschweilera coriacea", "Protium puncticulatum")
-        sitios <- paste0("Parcela_", rep(1:4, each = 15))
-        sp_sample <- sample(especies, 60, replace = TRUE)
-        ab_sample <- sample(1:15, 60, replace = TRUE)
-        dap_sample <- round(stats::runif(60, 8, 85), 1)
-        alt_sample <- round(stats::runif(60, 5, 32), 1)
-        dc_sample <- round(stats::runif(60, 2, 14), 1)
-
-        data.frame(
-          sitio = sitios,
-          especie = sp_sample,
-          abundancia = ab_sample,
-          dap_cm = dap_sample,
-          altura_m = alt_sample,
-          dc_m = dc_sample,
-          stringsAsFactors = FALSE
-        )
+        obtener_datos_ejemplo()
       } else if (src == "dune_t") {
         if (exists("dune_t", envir = .GlobalEnv)) {
           get("dune_t", envir = .GlobalEnv)

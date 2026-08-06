@@ -1,0 +1,10 @@
+name: floraveg
+title:
+username: paulefrensa
+account: paulefrensa
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 17646184
+bundleId: 12334980
+url: https://paulefrensa.shinyapps.io/floraveg/
+version: 1

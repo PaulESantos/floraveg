@@ -1,11 +1,11 @@
 Package: floraveg
-Title: Ecological and Vegetation Indicators
+Title: Indicadores Ecológicos y De Vegetación
 Version: 0.1.0
 Authors@R: 
     person("Paul E.", "Santos Andrade", , 
            "paulefrens@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-6635-0375"))
-Description: Automated processing and analysis of floristic and vegetation inventory data, strictly aligned with official guidelines of the Ministry of Environment of Peru ('MINAM', 2015). Provides functions for community matrix conversion, alpha and beta diversity estimation, species rank-abundance curves, structural parameters, and Importance Value Index ('IVI'). Estimates above-ground biomass ('AGB') using tropical tree allometric models by Chave et al. (2014) <doi:10.1111/gcb.12629> along with timber volume calculations and a reference database for neotropical wood density. Includes an interactive web application built with 'shiny', 'bslib', and 'ggplot2' for visual data exploration and automated report generation.
+Description: Automated processing, structural analysis, and ecological assessment of floristic and vegetation inventory data. Converts raw field observations into standardized community matrices for estimating alpha, beta, and gamma diversity metrics, species accumulation curves, and rarefaction profiles using 'vegan' and 'iNEXT'. Computes structural attributes including basal area, diametric and altitudinal class distributions, natural regeneration stages, and species Importance Value Index ('IVI'). Calculates Above-Ground Biomass ('AGB') for tropical forests using allometric models by Chave et al. (2014) <doi:10.1111/gcb.12629> paired with a curated reference database of neotropical wood densities, timber volume estimations, and equivalent carbon stock assessments. Includes an interactive modular web dashboard built with 'shiny', 'bslib', and 'ggplot2' for reactive data exploration, custom visualization, and reproducible report generation.
 License: MIT + file LICENSE
 Depends: 
     R (>= 3.5.0)

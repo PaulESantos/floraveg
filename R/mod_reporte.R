@@ -49,16 +49,7 @@ mod_reporte_server <- function(id, datos_reactive = NULL) {
 
     datos_modulo <- shiny::reactive({
       if (is.null(datos_reactive)) {
-        set.seed(42)
-        sitios <- paste0("Parcela_", rep(1:4, each = 15))
-        data.frame(
-          sitio = sitios,
-          especie = sample(c("Cedrela odorata", "Swietenia macrophylla", "Ceiba pentandra"), 60, replace = TRUE),
-          abundancia = sample(1:15, 60, replace = TRUE),
-          dap_cm = round(stats::runif(60, 10, 90), 1),
-          altura_m = round(stats::runif(60, 6, 30), 1),
-          stringsAsFactors = FALSE
-        )
+        obtener_datos_ejemplo()
       } else {
         shiny::req(datos_reactive())
         standardize_inventory(datos_reactive())
